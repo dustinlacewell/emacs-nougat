@@ -1,0 +1,102 @@
+* nested-narrowing :experimental:
+** hooks
+These hooks are called before and after narrowing and widening operations.
+#+BEGIN_SRC emacs-lisp
+  (defvar nn-before-narrow-hook (list) "Called before any nn narrowing operation")
+  (defvar nn-after-narrow-hook (list) "Called after any nn narrowing operation")
+  (defvar nn-before-widen-hook (list) "Called before any nn widening operation")
+  (defvar nn-after-widen-hook (list) "Called after any nn widening operation")
+#+END_SRC
+
+** nn-narrow-stack
+This list variable represents a stack of previous narrowing operations.
+
+Elements are lists of the form =(list start end)=
+
+#+BEGIN_SRC emacs-lisp
+  (defvar nn-narrow-stack (list) "Represents a stack of previous narrowing operations.")
+#+END_SRC
+
+** nn-narrow
+#+BEGIN_SRC emacs-lisp
+  (defun nn-narrow ()
+    (interactive)
+    (if (> 0 (length nn-before-narrow-hook))
+        (mapcar (lambda (f) (f)) 'nn-before-narrow-hook))
+
+    (let ((elem (list (point-min) (point-max))))
+      (setq nn-narrow-stack (push elem nn-narrow-stack)))
+    (org-narrow-to-subtree)
+    (outline-hide-subtree)
+    (org-cycle)
+
+    (if (> 0 (length nn-after-narrow-hook))
+        (mapcar (lambda (f) (f)) 'knowt-after-narrow-hook)))
+#+END_SRC
+
+** nn-widen
+#+BEGIN_SRC emacs-lisp
+  (defun nn-widen ()
+    (interactive)
+    (if nn-narrow-stack
+        (progn
+          (if (> 0 (length nn-narrow-stack))
+              (if (> 0 (length nn-before-widen-hook))
+                  (mapcar (lambda (f) (f)) 'nn-before-widen-hook))
+
+              (let ((prev-region (pop nn-narrow-stack)))
+                (widen)
+                (destructuring-bind (start end) prev-region
+                  (narrow-to-region start end)
+                  (goto-char start)))
+
+              (recenter)
+
+              (if (> 0 (length nn-after-widen-hook))
+                  (mapcar (lambda (f) (f)) 'knowt-after-widen-hook))))))
+#+END_SRC
+
+** nn-narrow-regexp
+Performs a regexp search before narrowing.
+#+BEGIN_SRC emacs-lisp
+  (defun nn-narrow-regexp (term)
+    (beginning-of-buffer)
+    (search-forward-regexp (format "^[\\*].*%s" term))
+    (nn-narrow))
+#+END_SRC
+
+** nn-narrow-occur
+Performs an occur search before narrowing.
+#+BEGIN_SRC emacs-lisp
+  (defun nn-narrow-occur ()
+    (interactive)
+    (helm-occur)
+    (nn-narrow))
+#+END_SRC
+
+** nn-narrow-heading
+Performs a heading search before narrowing.
+#+BEGIN_SRC emacs-lisp
+  (defun nn-narrow-heading ()
+    (interactive)
+    (helm-org-in-buffer-headings)
+    (outline-hide-subtree)
+    (nn-narrow))
+#+END_SRC
+
+** auto-narrowings
+#+BEGIN_SRC emacs-lisp
+  (defun nn-reset ()
+    (interactive)
+    (widen)
+    (beginning-of-buffer)
+    (org-global-cycle 1)
+    (search-forward-regexp "^* "))
+
+  (defun nn-narrow-to (heading)
+    (nn-reset)
+    (nn-narrow-regexp heading)
+    (org-global-cycle 3)
+    (beginning-of-buffer))
+#+END_SRC
+

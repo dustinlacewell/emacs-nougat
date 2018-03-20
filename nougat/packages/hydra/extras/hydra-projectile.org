@@ -1,0 +1,35 @@
+** hydra-projectile
+#+begin_src emacs-lisp
+  (defun projectile-dwim ()
+    (interactive)
+    (if (string= "-" (projectile-project-name))
+        (helm-projectile-switch-project)
+      (hydra-projectile/body)))
+
+  (defhydra hydra-projectile (:color blue :hint nil)
+  "
+   ^ ^               ^ ^             ^ ^              ^ ^               ╭─────────┐
+   ^ ^ Open          ^ ^ Search      ^ ^ Buffers      ^ ^ Cache         │ Project │
+  ─^─^───────────────^─^─────────────^─^──────────────^─^───────────────┴─────────╯
+  [_f_] file        [_a_] ack       [_s_] switch     [_C_] clear
+  [_r_] recent      [_o_] occur     [_k_] kill       [_x_] remove
+  [_p_] project      ^ ^             ^ ^             [_X_] cleanup
+  [_d_] directory
+  ^^^^^^^^                                                              SPC to exit
+  ^^^^^^^^─────────────────────────────────────────────────────────────────────────
+  @ %(projectile-project-root)
+  "
+    ("SPC" nil)
+    ("a"   projectile-ag)
+    ("s"   helm-projectile-switch-to-buffer)
+    ("C"   projectile-invalidate-cache)
+    ("d"   helm-projectile-find-dir)
+    ("f"   helm-projectile-find-file)
+    ("k"   projectile-kill-buffers)
+    ("o"   projectile-multi-occur)
+    ("p"   helm-projectile-switch-project "switch project")
+    ("r"   helm-projectile-recentf)
+    ("x"   projectile-remove-known-project)
+    ("X"   projectile-cleanup-known-projects)
+    ("q"   nil "cancel" :color blue))
+#+end_src

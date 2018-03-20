@@ -1,0 +1,7 @@
+** ace-jump-helm-line
+#+begin_src emacs-lisp
+  (use-package ace-jump-helm-line
+    :commands ace-jump-helm-line
+    :init (define-key helm-map (kbd "C-;") 'ace-jump-helm-line))
+#+end_src
+

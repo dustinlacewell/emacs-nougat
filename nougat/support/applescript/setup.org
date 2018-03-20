@@ -1,0 +1,7 @@
+* setup
+#+begin_src emacs-lisp
+  (use-package apples-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.as\\'" . apples-mode)))
+#+end_src
+

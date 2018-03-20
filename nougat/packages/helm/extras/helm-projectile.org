@@ -1,0 +1,5 @@
+* helm-projectile
+#+begin_src emacs-lisp
+  (use-package helm-projectile)
+#+end_src
+

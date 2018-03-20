@@ -1,0 +1,11 @@
+* cursor
+** box style
+#+BEGIN_SRC emacs-lisp
+  (setq-default cursor-type 'box)
+#+END_SRC
+
+** blinking
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 1)
+#+END_SRC
+

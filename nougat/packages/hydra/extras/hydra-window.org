@@ -1,0 +1,66 @@
+* hydra-window
+#+begin_src emacs-lisp
+  (use-package ace-window)
+
+  (defhydra hydra-window (:hint nil)
+     "
+                                                       ╭─────────┐
+        Move           Split           Do              │ Windows │
+  ╭────────────────────────────────────────────────────┴─────────╯
+          ^_k_^      [_v_] vertical      [_s_] swap
+          ^^↑^^      [_x_] horizontal    [_b_] buffer
+      _h_ ←   → _l_  [_o_] kill others   [_f_] file
+          ^^↓^^      [_d_] delete
+          ^_j_^                                        _<f19>_ to close
+  ────────────────────────────────────────────────────────────────
+  "
+     ("h" windmove-left )
+     ("j" windmove-down )
+     ("k" windmove-up )
+     ("l" windmove-right )
+     ("q" hydra-move-splitter-left)
+     ("w" hydra-move-splitter-down)
+     ("e" hydra-move-splitter-up)
+     ("r" hydra-move-splitter-right)
+     ("b" helm-mini)
+     ("f" helm-find-files)
+     ("F" follow-mode)
+     ("a" (lambda ()
+            (interactive)
+            (ace-window 1)
+            (add-hook 'ace-window-end-once-hook
+                      'hydra-window/body))
+         )
+     ("v" (lambda ()
+            (interactive)
+            (split-window-right)
+            (windmove-right))
+         )
+     ("x" (lambda ()
+            (interactive)
+            (split-window-below)
+            (windmove-down))
+         )
+     ("s" (lambda ()
+            (interactive)
+            (ace-window 4)
+            (add-hook 'ace-window-end-once-hook
+                      'hydra-window/body)))
+     ("S" save-buffer)
+     ("d" delete-window)
+     ("D" (lambda ()
+            (interactive)
+            (ace-window 16)
+            (add-hook 'ace-window-end-once-hook
+                      'hydra-window/body))
+         )
+     ("o" delete-other-windows (:color blue))
+     ("i" ace-maximize-window)
+     ("z" (progn
+            (winner-undo)
+            (setq this-command 'winner-undo))
+     )
+     ("Z" winner-redo)
+     ("<f19>" nil))
+#+end_src
+

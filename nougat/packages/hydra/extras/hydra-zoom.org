@@ -1,0 +1,11 @@
+* hydra-zoom
+#+begin_src emacs-lisp
+    (defhydra hydra-zoom (:color red)
+      "
+  zoom -- _<f19>_ to close
+  "
+      ("<f19>" nil, nil)
+      ("i" text-scale-increase "in")
+      ("o" text-scale-decrease "out"))
+#+end_src
+

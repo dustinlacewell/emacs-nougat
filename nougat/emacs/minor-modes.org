@@ -1,0 +1,107 @@
+* minor-modes
+** whitespace-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package whitespace
+    :diminish global-whitespace-mode
+    :init
+    (setq whitespace-style
+          '(face tabs newline trailing tab-mark space-before-tab space-after-tab))
+    (global-whitespace-mode 1))
+#+END_SRC
+
+** prettify-symbols-mode
+Various symbols will be replaced with nice looking unicode glyphs.
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode 1)
+#+END_SRC
+
+** electric-pair-mode
+Matching closed brackets are inserted for any typed open bracket.
+#+BEGIN_SRC emacs-lisp
+  (electric-pair-mode 1)
+#+END_SRC
+
+** rainbow-delimeters-mode
+#+BEGIN_SRC emacs-lisp
+  (require 'color)
+  (defun gen-col-list (length s v &optional hval)
+    (cl-flet ( (random-float () (/ (random 10000000000) 10000000000.0))
+            (mod-float (f) (- f (ffloor f))) )
+      (unless hval
+        (setq hval (random-float)))
+      (let ((golden-ratio-conjugate (/ (- (sqrt 5) 1) 2))
+            (h hval)
+            (current length)
+            (ret-list '()))
+        (while (> current 0)
+          (setq ret-list
+                (append ret-list
+                        (list (apply 'color-rgb-to-hex (color-hsl-to-rgb h s v)))))
+          (setq h (mod-float (+ h golden-ratio-conjugate)))
+          (setq current (- current 1)))
+        ret-list)))
+
+  (defun set-random-rainbow-colors (s l &optional h)
+    ;; Output into message buffer in case you get a scheme you REALLY like.
+    ;; (message "set-random-rainbow-colors %s" (list s l h))
+    (interactive)
+    (rainbow-delimiters-mode t)
+
+    ;; Show mismatched braces in bright red.
+    (set-face-background 'rainbow-delimiters-unmatched-face "red")
+
+    ;; Rainbow delimiters based on golden ratio
+    (let ( (colors (gen-col-list 9 s l h))
+           (i 1) )
+      (let ( (length (length colors)) )
+        ;;(message (concat "i " (number-to-string i) " length " (number-to-string length)))
+        (while (<= i length)
+          (let ( (rainbow-var-name (concat "rainbow-delimiters-depth-" (number-to-string i) "-face"))
+                 (col (nth i colors)) )
+            ;; (message (concat rainbow-var-name " => " col))
+            (set-face-foreground (intern rainbow-var-name) col))
+          (setq i (+ i 1))))))
+
+
+
+  (use-package rainbow-delimiters :commands rainbow-delimiters-mode :hook ...
+    :init
+    (setq rainbow-delimiters-max-face-count 16)
+    (set-random-rainbow-colors 0.6 0.7 0.5)
+    (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+#+END_SRC
+
+** show-paren-mode
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+  (setq show-paren-delay 0)
+  (require 'paren)
+  (set-face-background 'show-paren-match (face-background 'default))
+  (set-face-background 'show-paren-mismatch (face-background 'default))
+  (set-face-foreground 'show-paren-match "#ff0")
+  (set-face-foreground 'show-paren-mismatch "#f00")
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+#+end_src
+
+** which-key-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key              ;;; Display available keybindings in popup
+    :diminish which-key-mode
+    :config
+    ;; sort single chars alphabetically P p Q q
+    (setq which-key-sort-order 'which-key-key-order-alpha)
+    (setq which-key-idle-delay 0.8)
+    (which-key-mode))
+#+END_SRC
+
+** company-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+
+** ispell-minor-mode
+#+begin_src emacs-lisp
+  (setq ispell-program-name (expand-file-name "~/.nix-profile/bin/aspell"))
+#+end_src
+

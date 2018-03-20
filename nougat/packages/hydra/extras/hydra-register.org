@@ -1,0 +1,32 @@
+* hydra-registers
+#+begin_src emacs-lisp
+  (setq register-preview-delay nil)
+  (defhydra hydra-registers (:color pink :hint nil)
+    "
+    ^ ^                 ^ ^                  ^ ^                    ╭───────────┐
+      ^^Point             ^^Text               ^^Macro              │ Registers │
+  ╭─^─^─────────────────^─^──────────────────^─^────────────────────┴───────────╯
+   [_r_] save point    [_c_] copy region    [_m_] store
+   [_j_] jump          [_C_] copy rect      [_e_] execute
+   [_v_] view all      [_i_] insert
+    ^ ^                [_p_] prepend
+    ^ ^                [_a_] append
+    ^ ^                 ^ ^                  ^ ^                _<f19>_ to close
+  └─^─^─────────────────^─^──────────────────^─^────────────────────────────────
+    "
+    ("r" point-to-register)
+    ("j" jump-to-register)
+    ("v" view-register)
+
+    ("c" copy-to-register)
+    ("C" copy-rectangle-to-register)
+    ("i" insert-register)
+    ("a" append-to-register)
+    ("p" prepend-to-register)
+
+    ("m" kmacro-to-register)
+    ("e" jump-to-register)
+
+    ("<f19>" nil))
+#+end_src
+

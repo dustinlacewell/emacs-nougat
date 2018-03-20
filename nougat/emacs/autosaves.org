@@ -1,0 +1,29 @@
+* autosaves
+Auto-save will periodically save your file to backup file while you
+edit. This is great if something goes catastrophically wrong to Emacs!
+
+** store autosaves in a single place
+#+BEGIN_SRC emacs-lisp
+  (defvar emacs-autosave-directory
+    (concat user-emacs-directory "autosaves/")
+    "This variable dictates where to put auto saves. It is set to a
+    directory called autosaves located wherever your .emacs.d/ is
+    located.")
+
+  (unless (file-exists-p emacs-autosave-directory)
+      (make-directory emacs-autosave-directory))
+
+  (setq auto-save-file-name-transforms `((".*"
+  ,emacs-autosave-directory t)))
+#+END_SRC
+
+** save every 20 secs or 20 keystrokes
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-timeout 20
+        auto-save-interval 20)
+#+END_SRC
+
+** autosave every buffer that visits a file
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-default t)
+#+END_SRC

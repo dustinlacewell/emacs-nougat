@@ -1,0 +1,101 @@
+* hydra-org
+** hydra-org-goto-first-sibling
+#+begin_src emacs-lisp
+  (defun hydra-org-goto-first-sibling () (interactive)
+         (org-backward-heading-same-level 99999999))
+#+end_src
+
+** hydra-org-goto-last-sibling
+#+begin_src emacs-lisp
+  (defun hydra-org-goto-last-sibling () (interactive)
+         (org-forward-heading-same-level 99999999))
+#+end_src
+
+** hydra-org-parent-level
+#+begin_src emacs-lisp
+  (defun hydra-org-parent-level ()
+    (interactive)
+    (let ((o-point (point)))
+      (if (save-excursion
+            (beginning-of-line)
+            (looking-at org-heading-regexp))
+          (progn
+            (call-interactively 'outline-up-heading)
+            (org-cycle-internal-local))
+        (progn
+          (call-interactively 'org-previous-visible-heading)
+          (org-cycle-internal-local)))
+      (when (and (/= o-point (point))
+                 org-tidy-p)
+        (call-interactively 'hydra-org-tidy))))
+
+  (defun hydra-org-child-level ()
+    (interactive)
+    (org-show-entry)
+    (org-show-children)
+    (when (not (org-goto-first-child))
+      (when (save-excursion
+              (beginning-of-line)
+              (looking-at org-heading-regexp))
+        (next-line))))
+
+ #+end_src
+
+** hydra-org
+ #+begin_src emacs-lisp
+   (defhydra hydra-org (:hint nil :color red)
+     "
+   ^^^^^^^^^^^^^^^^^^                                                                ^     ^  ╭─────┐
+    ^ ^^Shift  ^^^^Header  ^^Level  ^^Ends  ^^Narrow       ^^Jump                        ^^^^^│ Org │
+   ╭^─^──^─^──^─^───^─^───────^─^─────^─^──────^─^───────────────────────────────────^───^^^^^┴─────╯
+    ^ ^  _K_  ^ ^   _p_       _k_     _a_      _o_      [_r_] Rifle         [_SPC_] Cycle
+    ^ ^  ^↑^  ^ ^   ^↑^       ^↑^     ^↑^      ^↑^      [_v_] Avy           [_t_]  Tidy mode: %(org-tidy-p)
+    _h_ ←^ ^→ _l_   ^ ^       ^ ^     ^ ^      ^ ^      [_s_] Siblings      [_L_]  Links
+    ^ ^  ^↓^  ^ ^   ^↓^       ^↓^     ^↓^      ^↓^      [_d_] Children
+    ^ ^  _J_  ^ ^   _n_       _j_     _e_      _i_      [_f_] Parents
+   ^^^^^^^^^^^^^^                                          Level
+   ^^^^^^^^^                                       [_1_ _2_ _3_ _4_ _5_]             _<f19>_ to close
+   ^^^^^^^^^^^^^^^^^^^^──────────────────────────────────────────────────────────────────────────────"
+     ("<f19>" (funcall hera-default-hydra) nil :color blue)
+     ;; shift
+     ("h" org-promote-subtree)
+     ("l" org-demote-subtree)
+     ("K" org-move-subtree-up)
+     ("J" org-move-subtree-down)
+     ;; header
+     ("p" org-backward-heading-same-level)
+     ("n" org-forward-heading-same-level)
+     ;; ends
+     ("a" hydra-org-goto-first-sibling)
+     ("e" hydra-org-goto-last-sibling)
+     ;; level
+     ("j" hydra-org-child-level)
+     ("k" hydra-org-parent-level)
+     ;; narrow
+     ("o" nn-widen)
+     ("i" nn-narrow)
+
+     ("SPC" org-cycle)
+     ("t" org-tidy)
+     ("L" org-toggle-link-display)
+
+     ("r" (lambda () (interactive)
+            (helm-org-rifle-current-buffer)
+            (call-interactively 'org-cycle)
+            (call-interactively 'org-cycle)))
+     ("v" avy-org-goto-heading-timer)
+     ("s" avy-org-same-level)
+     ("d" avy-org-child-level)
+     ("f" avy-org-parent-level)
+     ("S" (lambda () (interactive) (helm-org-in-buffer-headings) (org-cycle) (org-cycle)))
+
+     ("1" (avy-org-goto-level 1))
+     ("2" (avy-org-goto-level 2))
+     ("3" (avy-org-goto-level 3))
+     ("4" (avy-org-goto-level 4))
+     ("5" (avy-org-goto-level 5)))
+
+   (add-to-list 'hera-hydras '(org-mode hydra-org/body "org-mode"))
+
+#+end_src
+

@@ -1,0 +1,10 @@
+* jedi
+[[https://github.com/tkf/emacs-jedi][Jedi]] is an auto-completion server for Python.
+#+BEGIN_SRC emacs-lisp
+  (use-package jedi
+    :init
+    (progn
+      (add-hook 'python-mode-hook 'jedi:setup)
+      (setq jedi:complete-on-dot t)))
+#+END_SRC
+

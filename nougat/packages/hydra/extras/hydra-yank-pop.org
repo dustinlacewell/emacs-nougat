@@ -1,0 +1,20 @@
+* hydra-yank-pop
+#+begin_src emacs-lisp
+  (defhydra hydra-yank-pop (:columns 1 :hint nil)
+  "
+  prev^^   next
+  [_Y_] ←→ [_y_]
+
+  On Deck:
+  --------
+  %(substring-no-properties (current-kill 1 t))
+  "
+    ("C-y" yank nil)
+    ("M-y" yank-pop nil)
+    ("y" (yank-pop 1))
+    ("Y" (yank-pop -1))
+    ("l" helm-show-kill-ring "list" :color blue))   ; or browse-kill-ring
+  (global-set-key (kbd "M-y") #'hydra-yank-pop/yank-pop)
+  (global-set-key (kbd "C-y") #'hydra-yank-pop/yank)
+#+end_src
+

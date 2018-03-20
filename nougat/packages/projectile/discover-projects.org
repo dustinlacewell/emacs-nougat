@@ -1,0 +1,6 @@
+* discover projects
+#+begin_src emacs-lisp
+  (projectile-discover-projects-in-directory
+     (file-name-as-directory (expand-file-name "~/src")))
+#+end_src
+

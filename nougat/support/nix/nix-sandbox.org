@@ -1,0 +1,5 @@
+* nix-sandbox
+#+begin_src emacs-lisp
+  (use-package nix-sandbox)
+#+end_src
+

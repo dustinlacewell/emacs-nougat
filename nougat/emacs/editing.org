@@ -1,0 +1,26 @@
+** editing
+*** use spaces
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+*** visual fill-column
+#+begin_src emacs-lisp
+  (use-package visual-fill-column)
+#+end_src
+
+*** fill at 85
+#+BEGIN_SRC emacs-lisp
+  (setq-default fill-column 85)
+#+END_SRC
+
+*** autofill text-mode
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+#+END_SRC
+
+*** ssh for tramp
+#+begin_src emacs-lisp
+  (setq tramp-default-method "ssh")
+#+end_src
+

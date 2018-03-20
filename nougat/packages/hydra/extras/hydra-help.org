@@ -1,0 +1,48 @@
+* hydra-help
+#+begin_src emacs-lisp
+  (defhydra hydra-help (:exit t)
+  "
+  ^^^^^^^^                                                                                  ╭────────┐
+   Describe         ^ ^ Keys                  ^ ^Search                 ^ ^Docs           ^^│  Help  │
+  ^─^───────────────^─^───────────────────────^─^─────────────────────────^─^───────────────┴────────╯
+  _f_unction        _k_eybinding              _a_propros                  _i_nfo
+  _p_ackage         _w_here-is                _d_oc strings               _n_: man
+  _m_ode            _b_: show all bindings    _s_: info by symbol         _h_elm-dash
+  _v_ariable
+  ^^^^^^^^                                                                                 SPC to exit
+  ^^^^^^^^────────────────────────────────────────────────────────────────────────────────────────────
+  "
+      ;; Boring help commands...
+      ("e" view-echo-area-messages "messages")
+      ("l" view-lossage "lossage")
+      ("C" describe-coding-system "coding-system")
+      ("I" describe-input-method "input-method")
+
+
+      ;; Documentation
+      ("i" info nil)
+      ("n" helm-man-woman nil)
+      ("h" helm-dash)
+
+      ;; Keybinds
+      ("b" describe-bindings nil)
+      ("c" describe-key-briefly nil)
+      ("k" describe-key nil)
+      ("w" where-is nil)
+
+      ;; Search
+      ("a" helm-apropos nil)
+      ("d" apropos-documentation nil)
+      ("s" info-lookup-symbol nil)
+
+      ;; Describe
+      ("f" describe-function nil)
+      ("p" describe-package nil)
+      ("m" describe-mode nil)
+      ("v" describe-variable nil)
+      ("y" describe-syntax nil)
+
+      ;; quit
+      ("SPC" help-quit nil))
+#+end_src
+

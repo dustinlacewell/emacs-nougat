@@ -1,0 +1,35 @@
+* org-capture
+** set default notes file
+#+begin_src emacs-lisp
+  (setq org-default-notes-file (expand-file-name "~/org/notes.org"))
+#+end_src
+
+** bind a key for capture
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c c") 'org-capture)
+#+end_src
+
+** automatically visit new capture
+#+begin_src emacs-lisp
+  (add-to-list 'org-capture-after-finalize-hook 'org-capture-goto-last-stored)
+#+end_src
+** configure some templates
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(
+          ("w" "Work")
+          ("wj" "JIRA" entry
+           (file+olp "/Users/dustinlacewell/life/life.org" "Workiva" "Tasks")
+           (file "/Users/dustinlacewell/life/templates/jira-issue.org"))
+
+          ("wl" "Work Log" entry (file+olp+datetree "/Users/dustinlacewell/life/life.org" "Workiva" "Worklog") "* %<%l:%M %p> - %?")
+
+          ("e" "Emacs Package" entry
+           (file+olp "/Users/dustinlacewell/life/life.org" "Software" "Emacs" "Packages")
+           (file "/Users/dustinlacewell/life/templates/emacs-package.org"))
+
+          ("d" "D&D")
+          ("do" "D&D Objective" entry (file+olp "/Users/dustinlacewell/life/life.org" "D&D" "Objectives") "* %?")
+          ("dc" "D&D Character" entry (file+olp "/Users/dustinlacewell/life/life.org" "D&D" "Characters") "* %?")
+          ("da" "D&D Log" entry (file+olp+datetree "/Users/dustinlacewell/life/life.org" "D&D" "Log") "* %<%l:%M %p> - %?")))
+#+end_src

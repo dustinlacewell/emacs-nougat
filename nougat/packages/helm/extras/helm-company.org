@@ -1,0 +1,6 @@
+* helm-company
+#+begin_src emacs-lisp
+  (use-package helm-company
+    :bind (("C-:" . helm-company)))
+#+end_src
+

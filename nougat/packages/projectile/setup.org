@@ -1,0 +1,9 @@
+* Setup
+#+begin_src emacs-lisp
+  (use-package projectile
+    :init
+    (setq projectile-enable-caching t)
+    :config
+    (projectile-mode t))
+#+end_src
+

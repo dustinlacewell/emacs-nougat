@@ -1,0 +1,16 @@
+* setup
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :demand
+    :bind (("M-x" . helm-M-x)
+           ("C-h f" . helm-apropos)
+           ("C-x C-f" . helm-find-files)
+           ("C-x b" . helm-buffers-list)
+           ("C-c y" . helm-show-kill-ring)
+           ("C-x C-r" . helm-recentf)
+           ("C-x r l" . helm-bookmarks))
+    :config
+    (helm-mode 1)
+    (require 'helm-config))
+#+END_SRC
+

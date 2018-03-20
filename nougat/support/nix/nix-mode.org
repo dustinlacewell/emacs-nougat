@@ -1,0 +1,6 @@
+* nix-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package nix-mode
+    :init (add-to-list 'auto-mode-alist '("\\.nix?\\'" . nix-mode)))
+#+END_SRC
+

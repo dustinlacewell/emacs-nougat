@@ -1,0 +1,38 @@
+* backups
+Backups are created everytime a buffer is saved. This is really useful
+for recovering work that takes place between version-control commits
+or on unversioned files.
+
+** store backups with the autosaves
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist
+        `((".*" . ,emacs-autosave-directory)))
+#+END_SRC
+
+** keep 10 backups
+#+BEGIN_SRC emacs-lisp
+  (setq kept-new-versions 10
+        kept-old-verisons 0)
+#+END_SRC
+
+** delete old backups
+#+BEGIN_SRC emacs-lisp
+  (setq delete-old-versions t)
+#+END_SRC
+
+** copy files to avoid various problems
+#+BEGIN_SRC emacs-lisp
+  (setq backup-by-copying t)
+#+END_SRC
+
+** backup files even if version controlled
+#+BEGIN_SRC emacs-lisp
+  (setq vc-make-backup-files t)
+#+END_SRC
+
+** backup every save
+#+BEGIN_SRC emacs-lisp
+  (use-package backup-each-save
+    :config (add-hook 'after-save-hook 'backup-each-save))
+#+END_SRC
+
