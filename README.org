@@ -1,0 +1,49 @@
+* Emacs Nougat
+
+Collaborative Emacs configuration is currently limited to the following options:
+
+- Encapsulate features of configuration into packages and distribute them
+- Hand pick snippets out of other people's config and never benefit from enhancements
+  they make later.
+- Something even worse like a fucking wiki.
+
+Emacs-nougat is a repository of "not-quite-packagable" snippets (nougat) and a system
+for composing them into a config file.
+
+** How does it work?
+
+Its crazy simple.
+
+1. *Create an outline*
+
+An outline, like those you'll find in =user-outlines/= is an =org-mode= document which
+can be structured however you like. Put elisp inside of =#+begin_src emacs-lisp
+.. #+end_src= blocks to have them part of your emacs config.
+
+2. *Include some nougat*
+
+Browse the =nougat/= directory and find snippets that you find useful. Then anywhere
+within your outline you can include it:
+
+#+begin_src text
+#+INCLUDE: "../nougat/package-management/straight.org"
+#+end_src
+
+If you want to include a specific heading from a nougat file you can do that too:
+
+#+begin_src text
+#+INCLUDE: "../nougat/package-management/straight.org::use-package integration"
+#+end_src
+
+3. *Build your config*
+
+With an outline located at =user-outlines/my-config.org=, then from the root of the
+repository run the build script:
+
+#+begin_src shell
+./bin/build-elisp.sh my-outline
+less ./user-outlines/my-config.el
+#+end_src
+
+You can copy this to =~/.emacs.d/init.el= or create a symlink to it, or simply run
+=(load-file path-to-el-file)= from your existing config.
