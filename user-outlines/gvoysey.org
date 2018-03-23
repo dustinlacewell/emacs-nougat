@@ -84,9 +84,9 @@ evangelize people!
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-export.org"
 
 ** COMMENT org-capture
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::bind a key for capture"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::automatically visit new capture"
+##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
+##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::bind a key for capture"
+##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::automatically visit new capture"
 
 * projectile
 #+INCLUDE: "../nougat/packages/projectile/setup.org"
