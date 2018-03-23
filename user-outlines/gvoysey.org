@@ -14,7 +14,7 @@
 * boilerplate
 ** my/org-path-name
 #+begin_src emacs-lisp
-  (defvar my/org-path-name (expand-file-name "~/notebook/"))
+  (defvar my/org-path-name (expand-file-name "~/Notebook/"))
 #+end_src
 
 ** my/org-file-name
@@ -75,7 +75,9 @@ evangelize people!
 #+INCLUDE: "../nougat/packages/org-mode/setup.org::setup"
 #+INCLUDE: "../nougat/packages/org-mode/setup.org::look"
 #+INCLUDE: "../nougat/packages/org-mode/setup.org::feel"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::add languages to babel"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::set default header args"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::disable code evaluation prompts"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-olp.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-tidy.org"
@@ -83,18 +85,15 @@ evangelize people!
 #+INCLUDE: "../nougat/packages/org-mode/extras/dynamic-tag-position.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-export.org"
 
-** COMMENT org-capture
-##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
-##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::bind a key for capture"
-##+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::automatically visit new capture"
-
 * projectile
 #+INCLUDE: "../nougat/packages/projectile/setup.org"
-#+INCLUDE: "../nougat/packages/projectile/discover-projects.org"
+
 Override default project directory path.
 #+begin_src emacs-lisp
-  (setq projectile-project-directory (expand-file-name "~/Projects/")
+  (setq projectile-project-directory (expand-file-name "~/Projects/"))
 #+end_src
+
+#+INCLUDE: "../nougat/packages/projectile/discover-projects.org"
 * helm
 #+INCLUDE: "../nougat/packages/helm/setup.org"
 #+INCLUDE: "../nougat/packages/helm/extras/ace-jump-helm-line.org"
@@ -107,9 +106,8 @@ Override default project directory path.
 #+INCLUDE: "../nougat/packages/helm/extras/helm-projectile.org"
 * yasnippet
 #+INCLUDE: "../nougat/packages/yasnippet/yasnippet.org"
-* magit
-#+INCLUDE: "../nougat/packages/magit/setup.org"
-
+* COMMENT magit
+ "../nougat/packages/magit/setup.org"
 * ranger
 #+INCLUDE: "../nougat/packages/ranger/ranger.org"
 * multiple-cursors
@@ -141,18 +139,3 @@ Override default project directory path.
 #+INCLUDE: "../nougat/packages/hydra/extras/hydra-window.org"
 #+INCLUDE: "../nougat/packages/hydra/extras/hydra-yank-pop.org"
 #+INCLUDE: "../nougat/packages/hydra/extras/hydra-zoom.org"
-
-* life support
-With the use of [[https://github.com/dustinlacewell/org-ls][org-ls]] I load an org-file which contains a number of babel
-source-blocks and utility elisp. These support functions are utilized in my use of
-org-mode and to build hydras.
-
-#+begin_src emacs-lisp
-  (use-package org-ls
-    :after (org hydra)
-    :straight (org-ls :type git :host github :repo "dustinlacewell/org-ls")
-    :config
-    (require 'org-ls)
-    (org-ls-load-file (my/make-org-file-name "support.org")))
-#+end_src
-
