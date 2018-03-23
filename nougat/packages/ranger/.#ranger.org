@@ -1,6 +1,0 @@
-* Ranger
-Ranger is a dired add-on that adds shiny features.
-#+begin_src emacs-lisp
-(use-package ranger)
-(require 'ranger)
-#+end_src
