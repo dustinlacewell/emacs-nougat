@@ -1,0 +1,55 @@
+#+title: example init.el
+#+description: A literate programming style exposition of my Emacs configuration
+#+language: en
+#+startup: overview indent align
+#+babel: :cache no
+#+options: ^:nil num:nil tags:nil
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+html_head: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+html_head: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+
+* straight.el
+Most of the nougat snippets utilize =use-package= and =straight.el= to install
+dependencies. Having the following includes is probably not optional for now.
+
+#+include: "../nougat/package-management/straight.org::bootstrap"
+#+include: "../nougat/package-management/straight.org::use-package integration"
+
+* badger-theme
+This is a nice looking theme to get you going. Change it to whatever you want!
+
+#+begin_src emacs-lisp
+  (use-package badger-theme
+    :config (load-theme 'badger t))
+#+end_src
+
+* emacs
+Get a blinking cursor!
+#+include: "../nougat/emacs/cursor.org::blinking"
+
+* org-mode
+Get Org-9, woo!
+#+include: "../nougat/packages/org-mode/setup.org::setup"
+Make it look awesome!
+#+include: "../nougat/packages/org-mode/setup.org::look"
+
+* projectile
+Who doesn't want Projectile?
+#+include: "../nougat/packages/projectile/setup.org"
+#+include: "../nougat/packages/projectile/discover-projects.org"
+Tell discover-projects.org where to find your projects.
+#+begin_src emacs-lisp
+  (setq projectile-project-directory (expand-file-name "~/Projects"))
+#+end_src
+
+* helm
+Don't like Helm? Submit a PR with Ivy/Swyper nougats!
+#+include: "../nougat/packages/helm/setup.org"
+
+
+* what else?
+
+Anything you want! Include additional nougats, or customizations by using elisp babel blocks.
