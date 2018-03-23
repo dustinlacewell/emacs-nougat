@@ -1,0 +1,11 @@
+* AuCTeX
+AuCTex is a major mode for managing the compilation of latex documents.
+#+begin_src emacs-lisp
+(if (not (eq system-type 'darwin))
+  (straight-use-package 'auctex)
+  ;; Use xetex by default, so we can use ttf fonts.
+  (setq-default TeX-engine 'xetex)
+  ;; PDF output by default
+  (setq-default TeX-PDF-mode t)
+)
+#+end_src
