@@ -81,6 +81,7 @@ evangelize people!
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-tidy.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/nested-narrowing.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/dynamic-tag-position.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-export.org"
 
 ** COMMENT org-capture
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
@@ -104,10 +105,15 @@ Override default project directory path.
 #+INCLUDE: "../nougat/packages/helm/extras/helm-flyspell.org"
 #+INCLUDE: "../nougat/packages/helm/extras/helm-org-rifle.org"
 #+INCLUDE: "../nougat/packages/helm/extras/helm-projectile.org"
-
+* yasnippet
+#+INCLUDE: "../nougat/packages/yasnippet/yasnippet.org"
 * magit
 #+INCLUDE: "../nougat/packages/magit/setup.org"
 
+* ranger
+#+INCLUDE: "../nougat/packages/ranger/ranger.org"
+* multiple-cursors
+#+INCLUDE: "../nougat/packages/multiple-cursors/multiple-cursors.org"
 * language support
 ** LaTeX
 #+INCLUDE: "../nougat/support/latex/latex.org"
