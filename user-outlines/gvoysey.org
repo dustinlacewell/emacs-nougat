@@ -109,7 +109,7 @@ Override default project directory path.
 * COMMENT magit
  "../nougat/packages/magit/setup.org"
 * ranger
-#+INCLUDE: "../nougat/packages/ranger/ranger.org"
+ "../nougat/packages/ranger/ranger.org"
 * multiple-cursors
 #+INCLUDE: "../nougat/packages/multiple-cursors/multiple-cursors.org"
 * language support
