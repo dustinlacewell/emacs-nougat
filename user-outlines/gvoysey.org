@@ -12,7 +12,6 @@
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
 * boilerplate
-
 ** my/org-path-name
 #+begin_src emacs-lisp
   (defvar my/org-path-name (expand-file-name "~/notebook/"))
@@ -91,7 +90,10 @@ evangelize people!
 * projectile
 #+INCLUDE: "../nougat/packages/projectile/setup.org"
 #+INCLUDE: "../nougat/packages/projectile/discover-projects.org"
-
+Override default project directory path.
+#+begin_src emacs-lisp
+  (setq projectile-project-directory (expand-file-name "~/Projects/")
+#+end_src
 * helm
 #+INCLUDE: "../nougat/packages/helm/setup.org"
 #+INCLUDE: "../nougat/packages/helm/extras/ace-jump-helm-line.org"
