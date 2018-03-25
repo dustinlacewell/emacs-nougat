@@ -1,8 +1,8 @@
 * YASnippet
 YASnippet extends org-mode '<s'-like templating in an arbitrary way.
-For now, I'll use this to augment org-mode to handle common export cases.
+This is useful for quickly applying export settings, annotating code blocks, and the like. 
 
-I maintain my directory of snippets directly in my .emacs.d directory, for now.
+This assumes that snippets are stored or symlinked to =${HOME}/.emacs.d/snippets/*=
 #+begin_src emacs-lisp
 (use-package yasnippet)
 (setq yas-snippet-dirs
