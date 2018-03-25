@@ -107,9 +107,9 @@ Override default project directory path.
 * yasnippet
 #+INCLUDE: "../nougat/packages/yasnippet/yasnippet.org"
 * COMMENT magit
- "../nougat/packages/magit/setup.org"
+ #+INCLUDE: "../nougat/packages/magit/setup.org"
 * ranger
- "../nougat/packages/ranger/ranger.org"
+"../nougat/packages/ranger/ranger.org"
 * multiple-cursors
 #+INCLUDE: "../nougat/packages/multiple-cursors/multiple-cursors.org"
 * language support

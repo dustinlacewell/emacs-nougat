@@ -1,3 +1,5 @@
+all: clean init
+
 clean:
 	-rm -f ./user-outlines/$(user).e*
 
