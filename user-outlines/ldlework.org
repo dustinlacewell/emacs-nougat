@@ -77,10 +77,21 @@ evangelize people!
 #+INCLUDE: "../nougat/packages/org-mode/setup.org::feel"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-olp.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-tidy.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/nested-narrowing.org"
 #+INCLUDE: "../nougat/packages/org-mode/extras/dynamic-tag-position.org"
+
+** org-olp
+=org-olp= contains a number of elisp functions for working with Org-mode OLP paths.
+
+Get it at http://github.com/dustinlacewell/org-olp
+
+#+begin_src emacs-lisp
+  (use-package org-olp
+      :after (org)
+      :straight (org-olp :type git :repo "/Users/dustinlacewell/src/org-olp"))
+
+#+end_src
 
 ** org-capture
 #+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
