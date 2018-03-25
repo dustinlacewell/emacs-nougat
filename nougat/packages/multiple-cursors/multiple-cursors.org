@@ -1,6 +1,7 @@
 * Multiple Cursors
-Multiple Cursors is a Sublime Text addiction writ large. This section isn't very
-configured yet.
+Multiple Cursors is an emacs package to provide Sublime Text-like multiple selections.
+
+This section isn't very configured yet.
 #+begin_src emacs-lisp
 (use-package multiple-cursors)
 (require 'multiple-cursors)
