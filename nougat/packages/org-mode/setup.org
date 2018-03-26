@@ -69,6 +69,7 @@
 
 *** theme customizations
 #+begin_src emacs-lisp
+  (defvar org-beautify-font "Menlo")
   (use-package org-beautify-theme)
   (let* ((background-color (face-background 'default nil 'default))
          (padding nil))
@@ -98,14 +99,14 @@
                               ((t (:inherit org-level-faces))))
                             `(org-meta-line
                               ((t
-                                (:family "Roboto Mono Thin for Powerline"
+                                (:family org-beautify-font
                                          :slant italic
                                          :height 0.9
                                          :foreground "#777777"))))
                             `(org-document-info-keyword
                               ((t
                                 (:inherit default
-                                          :family "Roboto Mono Thin for Powerline"
+                                          :family org-beautify-font
                                           :height 0.8
                                           :foreground "#AA7777"))))
                             `(org-document-title
@@ -125,10 +126,10 @@
                                 (:background "#373737"
                                              :box nil
                                              :height 1.2
-                                             :family "Source Code Pro for Powerline"))))
+                                             :family "Menlo"))))
                             `(org-block-begin-line
                               ((t
-                                (:family "Roboto Mono Thin for Powerline"
+                                (:family org-beautify-font
                                          :height 0.8
                                          :foreground "#777777"
                                          :background "#222222"))))

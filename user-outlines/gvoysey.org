@@ -1,0 +1,141 @@
+#+title: gvoysey's init.el
+#+description: A literate programming-style exposition of my Emacs configuration
+#+language: en
+#+startup: overview indent align
+#+babel: :cache no
+#+options: ^:nil num:nil tags:nil toc:nil
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+html_head: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+html_head: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+
+* boilerplate
+** my/org-path-name
+#+begin_src emacs-lisp
+  (defvar my/org-path-name (expand-file-name "~/Notebook/"))
+#+end_src
+
+** my/org-file-name
+#+begin_src emacs-lisp
+  (defun my/make-org-file-name (file-name)
+    (concat my/org-path-name file-name))
+#+end_src
+
+  ,** my/notes-file-name
+#+begin_src emacs-lisp
+  (defvar my/notes-file-name (my/make-org-file-name "notes.org"))
+#+end_src
+
+** my/template-directory
+#+begin_src emacs-lisp
+  (defvar my/template-directory (concat my/org-path-name "templates"))
+#+end_src
+
+** my/make-template-file-name
+#+begin_src emacs-lisp
+  (defun my/make-template-file-name (file-name)
+    (concat my/template-directory file-name))
+#+end_src
+
+* straight.el
+Straight.el is the future of package management for Emacs. Get out there and
+evangelize people!
+
+#+INCLUDE: "../nougat/package-management/straight.org::bootstrap"
+#+INCLUDE: "../nougat/package-management/straight.org::use-package integration"
+
+* badger-theme
+#+begin_src emacs-lisp
+  (use-package badger-theme
+    :config (load-theme 'badger t))
+#+end_src
+
+* emacs
+#+INCLUDE: "../nougat/emacs/fonts.org"
+#+INCLUDE: "../nougat/emacs/autosaves.org"
+#+INCLUDE: "../nougat/emacs/backups.org"
+#+INCLUDE: "../nougat/emacs/cursor.org"
+#+INCLUDE: "../nougat/emacs/disable.org"
+#+INCLUDE: "../nougat/emacs/editing.org"
+#+INCLUDE: "../nougat/emacs/key-bindings.org"
+#+INCLUDE: "../nougat/emacs/minor-modes.org"
+#+INCLUDE: "../nougat/emacs/modeline.org"
+
+** exec-path from shell
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (when (memq window-system '(mac ns ox))
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+* org-mode
+#+INCLUDE: "../nougat/packages/org-mode/setup.org::setup"
+#+INCLUDE: "../nougat/packages/org-mode/setup.org::look"
+#+INCLUDE: "../nougat/packages/org-mode/setup.org::feel"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::add languages to babel"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::set default header args"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org::disable code evaluation prompts"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-olp.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-tidy.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/nested-narrowing.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/dynamic-tag-position.org"
+#+INCLUDE: "../nougat/packages/org-mode/extras/org-export.org"
+
+* projectile
+#+INCLUDE: "../nougat/packages/projectile/setup.org"
+
+Override default project directory path.
+#+begin_src emacs-lisp
+  (setq projectile-project-directory (expand-file-name "~/Projects/"))
+#+end_src
+
+#+INCLUDE: "../nougat/packages/projectile/discover-projects.org"
+* helm
+#+INCLUDE: "../nougat/packages/helm/setup.org"
+#+INCLUDE: "../nougat/packages/helm/extras/ace-jump-helm-line.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-ag.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-bookmark.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-company.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-descbinds.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-flyspell.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-org-rifle.org"
+#+INCLUDE: "../nougat/packages/helm/extras/helm-projectile.org"
+* yasnippet
+#+INCLUDE: "../nougat/packages/yasnippet/yasnippet.org"
+* COMMENT magit
+ #+INCLUDE: "../nougat/packages/magit/setup.org"
+* ranger
+"../nougat/packages/ranger/ranger.org"
+* multiple-cursors
+#+INCLUDE: "../nougat/packages/multiple-cursors/multiple-cursors.org"
+* language support
+** LaTeX
+#+INCLUDE: "../nougat/support/latex/latex.org"
+** lisp
+#+INCLUDE: "../nougat/support/lisp/lispy-mode.org"
+** python
+#+INCLUDE: "../nougat/support/python/jedi.org"
+#+INCLUDE: "../nougat/support/python/elpy.org"
+
+** markdown
+#+INCLUDE: "../nougat/support/markdown/markdown-mode.org"
+
+* hydra
+#+INCLUDE: "../nougat/packages/hydra/setup.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-hera.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-bookmarks.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-elisp.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-helm.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-help.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-mark.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-org.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-projectile.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-python.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-register.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-window.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-yank-pop.org"
+#+INCLUDE: "../nougat/packages/hydra/extras/hydra-zoom.org"

@@ -1,0 +1,11 @@
+* Multiple Cursors
+Multiple Cursors is an emacs package to provide Sublime Text-like multiple selections.
+
+This section isn't very configured yet.
+#+begin_src emacs-lisp
+(use-package multiple-cursors)
+(require 'multiple-cursors)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+#+end_src
