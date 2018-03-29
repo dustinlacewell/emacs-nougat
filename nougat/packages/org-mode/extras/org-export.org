@@ -4,12 +4,14 @@ Newer org-modes support sane quoting
 #+begin_src emacs-lisp
 (setq org-export-with-smart-quotes t)
 #+end_src
+
 *** Set latex as xelatex
 xelatex (or luatex) are usually provided with texlive. They allow, among other things,
 native use of truetype fonts.
 #+begin_src emacs-lisp
 (setq org-latex-compiler "xelatex")
 #+end_src
+
 *** Use minted
 Minted should be usd to dump codeblocks to PDF. This requires pygments and a working
 python installation on the path.
@@ -24,6 +26,6 @@ Insert line-breaks where needed to avoid PDF overflow.
 
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")
-                                 ("fontsize" "\small"))
+                                 ("fontsize" "\\small"))
 )
 #+END_SRC
