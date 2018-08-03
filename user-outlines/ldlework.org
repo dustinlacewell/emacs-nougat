@@ -337,13 +337,13 @@ The following sections customize core Emacs settings.
 #+end_src
 
 ** hydra-default
-
 #+begin_src emacs-lisp
   (nougat-hydra hydra-default (:color blue)
     ("Editing"
      (("p" (hera-push 'hydra-projectile/body) "projectile")
       ("r" (hera-push 'hydra-registers/body) "registers")
-      ("m" (hera-push 'hydra-mark/body) "mark"))
+      ("m" (hera-push 'hydra-mark/body) "mark")
+      ("b" (hera-push 'hydra-bookmarks/body) "bookmarks"))
      "UI"
      (("w" (hera-push 'hydra-window/body) "windows")
       ("z" (hera-push 'hydra-zoom/body) "zoom"))
