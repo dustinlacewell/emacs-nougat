@@ -11,12 +11,7 @@
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
-* straight.el
-Most of the nougat snippets utilize =use-package= and =straight.el= to install
-dependencies. Having the following includes is probably not optional for now.
-
-#+include: "../nougat/package-management/straight.org::bootstrap"
-#+include: "../nougat/package-management/straight.org::use-package integration"
+#+include: "../nougat/required.org"
 
 * badger-theme
 This is a nice looking theme to get you going. Change it to whatever you want!
@@ -32,23 +27,20 @@ Get a blinking cursor!
 
 * org-mode
 Get Org-9, woo!
-#+include: "../nougat/packages/org-mode/setup.org::setup"
-Make it look awesome!
-#+include: "../nougat/packages/org-mode/setup.org::look"
-
+#+include: "../nougat/packages/org.org" :only-contents t
 * projectile
-Who doesn't want Projectile?
-#+include: "../nougat/packages/projectile/setup.org"
-#+include: "../nougat/packages/projectile/discover-projects.org"
-Tell discover-projects.org where to find your projects.
+
+Tell projectile where to find your projects.
 #+begin_src emacs-lisp
-  (setq projectile-project-directory (expand-file-name "~/Projects"))
+  (setq nougat-project-roo (expand-file-name "~/Projects"))
 #+end_src
+
+Then import the snippet:
+#+include: "../nougat/packages/projectile.org"
 
 * helm
 Don't like Helm? Submit a PR with Ivy/Swyper nougats!
-#+include: "../nougat/packages/helm/setup.org"
-
+#+include: "../nougat/packages/helm.org"
 
 * what else?
 
