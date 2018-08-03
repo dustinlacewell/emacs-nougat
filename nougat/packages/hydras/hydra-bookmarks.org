@@ -2,19 +2,33 @@
 Manage your bookmarks. Depends on =helm=.
 
 #+begin_src emacs-lisp
+  (defun hydra--bookmark-path ()
+    (let* ((directory (abbreviate-file-name (file-name-directory (buffer-file-name))))
+           (parts (->> "/"
+                       (split-string directory "/")
+                       (-remove (lambda (c) (eq 0 (length c))))))
+           (parent-part (car (last parts)))
+           (parts (->> parts (-butlast) (-map (lambda (c) (substring c 0 1)))))
+           (parts (append parts (list parent-part)))
+           (merge (string-join parts "/")))
+      (if (string-equal "~" (car parts)) merge
+        (concat "/" merge))))
+
+  (defun hydra--bookmark-name ()
+    (let* ((file-name (file-name-nondirectory (buffer-file-name)))
+           (path (hydra--bookmark-path))
+           (name (string-join (list path file-name) "/")))
+      (format "%s:%s" name (line-number-at-pos))))
+
   (defun hydra--set-bookmark (&optional name)
     (interactive)
-    (let ((file-name (file-name-nondirectory (buffer-file-name)))
-          (path-parts (split-string (file-name-directory (buffer-file-name))))
-          (name (substring (buffer-file-name))(format "%s" ))))
-    (save-excursion
-      (beginning-of-buffer))
-    (let ((filename (or name (format "%s:%s" (buffer-name) (line-number-at-pos)))))
-      (bookmark-set filename)))
+    (let ((name (or name (hydra--bookmark-name))))
+      (bookmark-set name)
+      (message (format "Bookmark created: %s" name))))
 
   (nougat-hydra hydra-bookmarks (:color blue)
-    ("Bookmarks" (("a" (hydra--set-bookmark) "add this")
+    ("Bookmarks" (("a" hydra--set-bookmark "add this")
                   ("n" (hydra--set-bookmark (read-from-minibuffer "Name")) "add named")
-                  ("l" (helm-bookmarks) "list all"))))
+                  ("l" helm-bookmarks "list all"))))
 #+end_src
 
