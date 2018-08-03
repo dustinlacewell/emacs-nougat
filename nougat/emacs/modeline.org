@@ -1,46 +1,17 @@
-** modeline
-*** column number
+* modeline
+** column number
 #+BEGIN_SRC emacs-lisp
   (column-number-mode 1)
 #+END_SRC
 
-*** current time
+** current time
 #+BEGIN_SRC emacs-lisp
   (use-package timeclock
     :config (progn (display-time-mode 1)))
 #+END_SRC
 
-*** shorten prompts
+** shorten prompts
 #+BEGIN_SRC emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-*** hidden modes
-#+BEGIN_SRC emacs-lisp
-    (use-package smart-mode-line
-      :config
-      (progn (setq sml/shorten-modes t)
-             (setq sml/shorten-directory t)
-             (setq sml/name-width 20)
-             (setq sml/mode-width 'full)
-             (setq sml/hidden-modes nil)
-             (setq sml/theme nil)
-             (add-to-list 'sml/hidden-modes " Anzu")
-             (add-to-list 'sml/hidden-modes " AC")
-             (add-to-list 'sml/hidden-modes " FlyC")
-             (add-to-list 'sml/hidden-modes " yas")
-             (add-to-list 'sml/hidden-modes " pair")
-             (add-to-list 'sml/hidden-modes " FIC")
-             (add-to-list 'sml/hidden-modes " Abbrev")
-             (add-to-list 'sml/hidden-modes " ARev")
-             (add-to-list 'sml/hidden-modes " SliNav")
-             (add-to-list 'sml/hidden-modes " ElDoc")
-             (add-to-list 'sml/hidden-modes " company")
-             (add-to-list 'sml/hidden-modes " overseer")
-             (add-to-list 'sml/hidden-modes " Guide")
-             (sml/setup)
-             (use-package anzu
-               :config
-               (global-anzu-mode 1))))
 #+END_SRC
 

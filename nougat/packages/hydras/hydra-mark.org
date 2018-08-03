@@ -1,0 +1,24 @@
+* hydra-mark
+#+begin_src emacs-lisp
+  (defun unpop-to-mark-command ()
+    "Unpop off mark ring. Does nothing if mark ring is empty."
+    (when mark-ring
+      (setq mark-ring (cons (copy-marker (mark-marker)) mark-ring))
+      (set-marker (mark-marker) (car (last mark-ring)) (current-buffer))
+      (when (null (mark t)) (ding))
+      (setq mark-ring (nbutlast mark-ring))
+      (goto-char (marker-position (car (last mark-ring))))))
+
+  (defun push-mark ()
+    (interactive)
+    (set-mark-command nil)
+    (set-mark-command nil))
+
+  (nougat-hydra hydra-mark (:color pink)
+    ("Mark"
+     (("m" push-mark "mark here")
+      ("p" (lambda () (interactive) (set-mark-command '(4))) "previous")
+      ("n" (lambda () (interactive) (unpop-to-mark-command)) "next")
+      ("c" (lambda () (interactive) (setq mark-ring nil)) "clear"))))
+#+end_src
+

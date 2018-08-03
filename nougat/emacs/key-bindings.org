@@ -1,6 +1,7 @@
-** key-bindings
-*** meta n & p
+* key-bindings
+** meta n & p
 #+begin_src emacs-lisp
   (global-set-key (kbd "M-p") 'backward-paragraph)
   (global-set-key (kbd "M-n") 'forward-paragraph)
 #+end_src
+

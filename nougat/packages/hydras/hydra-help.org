@@ -1,0 +1,30 @@
+* hydra-help
+Many of the Emacs help facilities at your fingertips!
+#+begin_src emacs-lisp
+  (nougat-hydra hydra-help (:color blue)
+    ("Describe"
+     (("c" describe-function "function")
+      ("p" describe-package "package")
+      ("m" describe-mode "mode")
+      ("v" describe-variable "function"))
+     "Keys"
+     (("k" describe-key "key")
+      ("K" describe-key-briefly "brief key")
+      ("w" where-is "where-is")
+      ("b" helm-descbinds "bindings"))
+     "Search"
+     (("a" helm-apropos "apropos")
+      ("d" apropos-documentation "documentation")
+      ("s" info-lookup-symbol "symbol info"))
+     "Docs"
+     (("i" info "info")
+      ("n" helm-man-woman "man")
+      ("h" helm-dash "dash"))
+     "View"
+     (("e" view-echo-area-messages "echo area")
+      ("l" view-lossage "lossage")
+      ("c" describe-coding-system "encoding")
+      ("I" describe-input-method "input method")
+      ("C" describe-char "char at point"))))
+#+end_src
+

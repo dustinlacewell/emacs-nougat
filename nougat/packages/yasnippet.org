@@ -1,0 +1,12 @@
+* YASnippet
+[[https://github.com/joaotavora/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and
+automatically expand it into function templates. Bundled language templates include:
+C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more.
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-global-mode 1)
+    ;; allow nested snippets
+    (setq yas-triggers-in-field t))
+#+end_src

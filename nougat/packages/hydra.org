@@ -1,0 +1,116 @@
+* Hydra
+Hydra provides an easy way to create little pop-up interfaces with a collection of
+related single-key bindings.
+
+#+begin_src emacs-lisp
+  (use-package hydra)
+#+end_src
+
+** pretty-hydra
+[[https://github.com/jerrypnz/major-mode-hydra.el#pretty-hydra][Pretty-hydra]] provides a macro that makes it easy to get good looking Hydras.
+
+#+begin_src emacs-lisp
+  (use-package pretty-hydra
+    :straight (pretty-hydra :type git :host github
+                            :repo "jerrypnz/major-mode-hydra.el"
+                            :files ("pretty-hydra.el"))
+    :config
+    (require 'pretty-hydra))
+#+end_src
+
+** major-mode-hydra
+[[https://github.com/jerrypnz/major-mode-hydra.el][Major-mode-hydra]] provides an macro for defining major-mode specific Hydras.
+
+#+begin_src emacs-lisp
+  (use-package major-mode-hydra
+    :straight (major-mode-hydra
+               :type git :host github
+               :repo "jerrypnz/major-mode-hydra.el"
+               :files ("major-mode-hydra.el"))
+    :config
+    (require 'major-mode-hydra)
+    (global-kbd-or 'major-mode-hydra "C-<f19>"))
+#+end_src
+
+** hera
+[[https://github.com/dustinlacewell/hera][Hera]] provides for a few Hydra niceties including an API that allows your Hydras to
+form a stack.
+
+#+begin_src emacs-lisp
+  (use-package hera
+    :straight (hera :type git :host github :repo "dustinlacewell/hera")
+    :config
+    (require 'hera))
+#+end_src
+
+** nougat-hydra
+This is the main macro for defining Hydras in Nougat.
+#+begin_src emacs-lisp
+  (defun nougat--inject-hint (symbol hint)
+    (-let* ((name (symbol-name symbol))
+            (hint-symbol (intern (format "%s/hint" name)))
+            (format-form (cadr (eval hint-symbol)))
+            (string-cdr (nthcdr 1 format-form))
+            (format-string (string-trim (car string-cdr)))
+            (amended-string (format "%s\n\n%s" format-string hint)))
+      (setcar string-cdr amended-string)))
+
+  (defun nougat--make-head-hint (head default-color)
+    (-let (((key _ hint . rest) head))
+      (when key
+        (-let* (((&plist :color color) rest)
+                (color (or color default-color))
+                (face (intern (format "hydra-face-%s" color)))
+                (propertized-key (propertize key 'face face)))
+          (format " [%s]: %s" propertized-key hint)))))
+
+  (defun nougat--make-hint (heads default-color)
+    (string-join
+     (cl-loop for head in heads
+              for hint = (nougat--make-head-hint head default-color)
+              do (pp hint)
+              collect hint) "\n"))
+
+  (defun nougat--clear-hint (head)
+    (-let* (((key form _ . rest) head))
+      `(,key ,form nil ,@rest)))
+
+  (defun nougat--add-exit-head (heads)
+    (let ((exit-head `(,(var-or 'kbd-hera-pop "SPC") (hera-pop) "to exit" :color blue)))
+      (append heads `(,exit-head))))
+
+  (defun nougat--add-heads (columns extra-heads)
+    (let* ((cell (nthcdr 1 columns))
+           (heads (car cell))
+           (extra-heads (mapcar 'nougat--clear-hint extra-heads)))
+      (setcar cell (append heads extra-heads))))
+
+  (defmacro nougat-hydra (name body columns &optional extra-heads)
+    (declare (indent defun))
+    (-let* (((&plist :color default-color :major-mode mode) body)
+            (extra-heads (nougat--add-exit-head extra-heads))
+            (extra-hint (nougat--make-hint extra-heads default-color))
+            (body (plist-put body :hint nil))
+            (body-name (format "%s/body" (symbol-name name)))
+            (body-symbol (intern body-name))
+            (mode-support
+             `(when ',mode
+                (setq major-mode-hydra--body-cache
+                      (a-assoc major-mode-hydra--body-cache ',mode ',body-symbol)))))
+      (nougat--add-heads columns extra-heads)
+      (when mode
+        (remf body :major-mode))
+      `(progn
+         (pretty-hydra-define ,name ,body ,columns)
+         (nougat--inject-hint ',name ,extra-hint)
+         ,mode-support)))
+
+  ;; (nougat-hydra hydra-test (:color red :major-mode fundamental-mode)
+  ;;   ("First"
+  ;;    (("a" (message "first - a") "msg a" :color blue)
+  ;;     ("b" (message "first - b") "msg b"))
+  ;;    "Second"
+  ;;    (("c" (message "second - c") "msg c" :color blue)
+  ;;     ("d" (message "second - d") "msg d"))))
+
+#+end_src

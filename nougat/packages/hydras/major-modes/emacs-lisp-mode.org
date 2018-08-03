@@ -1,0 +1,13 @@
+* emacs-lisp
+#+begin_src emacs-lisp
+  (nougat-hydra hydra-elisp (:color blue :major-mode emacs-lisp-mode)
+    ("Execute"
+     (("d" eval-defun "defun")
+      ("b" eval-current-buffer "buffer")
+      ("r" eval-region "region"))
+     "Debug"
+     (("D" edebug-defun "defun")
+      ("a" edebug-all-defs "all definitions" :color red)
+      ("A" edebug-all-forms "all forms" :color red))))
+#+end_src
+

@@ -1,0 +1,6 @@
+* f#
+#+BEGIN_SRC emacs-lisp
+  (use-package fsharp-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.fs[iylx]?$" . fsharp-mode)))
+#+END_SRC

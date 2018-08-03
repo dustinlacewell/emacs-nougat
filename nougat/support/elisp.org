@@ -1,0 +1,53 @@
+* Elisp
+** context-help
+Use (=C-c h= / =kbd-toggle-context-help=) to turn on a help-window that will
+automatically update to display the help of the symbol before point.
+
+#+begin_src emacs-lisp
+  (defun toggle-context-help ()
+    "Turn on or off the context help.
+  Note that if ON and you hide the help buffer then you need to
+  manually reshow it. A double toggle will make it reappear"
+    (interactive)
+    (with-current-buffer (help-buffer)
+      (unless (local-variable-p 'context-help)
+        (set (make-local-variable 'context-help) t))
+      (if (setq context-help (not context-help))
+          (progn
+             (if (not (get-buffer-window (help-buffer)))
+                 (display-buffer (help-buffer)))))
+      (message "Context help %s" (if context-help "ON" "OFF"))))
+
+  (defun context-help ()
+    "Display function or variable at point in *Help* buffer if visible.
+  Default behaviour can be turned off by setting the buffer local
+  context-help to false"
+    (interactive)
+    (let ((rgr-symbol (symbol-at-point))) ; symbol-at-point http://www.emacswiki.org/cgi-bin/wiki/thingatpt%2B.el
+      (with-current-buffer (help-buffer)
+       (unless (local-variable-p 'context-help)
+         (set (make-local-variable 'context-help) t))
+       (if (and context-help (get-buffer-window (help-buffer))
+           rgr-symbol)
+         (if (fboundp  rgr-symbol)
+             (describe-function rgr-symbol)
+           (if (boundp  rgr-symbol) (describe-variable rgr-symbol)))))))
+
+  (defadvice eldoc-print-current-symbol-info
+    (around eldoc-show-c-tag activate)
+    (cond
+          ((eq major-mode 'emacs-lisp-mode) (context-help) ad-do-it)
+          ((eq major-mode 'lisp-interaction-mode) (context-help) ad-do-it)
+          ((eq major-mode 'apropos-mode) (context-help) ad-do-it)
+          (t ad-do-it)))
+
+  (global-kbd-or 'toggle-context-help "C-c h")
+#+end_src
+
+** lispy-mode
+#+begin_src emacs-lisp
+  (use-package lispy
+    :config
+    (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+    (add-hook 'lisp-interaction-mode-hook (lambda () (lispy-mode 1))))
+#+end_src

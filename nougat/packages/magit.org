@@ -1,0 +1,9 @@
+* Magit
+Use (=C-x g= / =kbd-magit-status=) to open the best front-end to Git there is!
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :config
+    (require 'magit)
+    (global-kbd-or 'magit-status "C-x g"))
+#+END_SRC
+

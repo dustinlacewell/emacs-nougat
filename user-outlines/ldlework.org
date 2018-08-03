@@ -10,50 +10,117 @@
 #+html_head: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+#+html_head: <script type="text/" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
-* boilerplate
+* setup
 
-** my/org-path-name
+The following sections take care of bootstrapping =straight.el= and defining some
+utility elisp that is used throughout the rest of the configuration.
+
+#+INCLUDE: "../nougat/required.org"
+
+** personal helpers
+Some helper function's I've defined to help generate paths relevant to my system and
+data.
+*** my/org-path-name
 #+begin_src emacs-lisp
-  (defvar my/org-path-name (expand-file-name "~/org/"))
+  (defvar my/org-path-name
+    (expand-file-name "~/org/")
+    "Root path-name for org-mode files")
 #+end_src
 
-** my/org-file-name
+*** my/org-file-name
 #+begin_src emacs-lisp
-  (defun my/make-org-file-name (file-name)
+  (defun my/org-file-name (file-name)
+    "Create file-name relative to my/org-path-name"
     (concat my/org-path-name file-name))
 #+end_src
 
-  ,** my/notes-file-name
+*** my/notes-file-name
 #+begin_src emacs-lisp
-  (defvar my/notes-file-name (my/make-org-file-name "notes.org"))
+  (defvar my/notes-file-name
+    (my/org-file-name "notes.org")
+    "Main notes file-name")
 #+end_src
 
-** my/template-directory
+*** my/template-directory
 #+begin_src emacs-lisp
-  (defvar my/template-directory (concat my/org-path-name "templates"))
+  (setq-default my/template-directory (concat my/org-path-name "templates/"))
 #+end_src
 
-** my/make-template-file-name
+*** my/template-file-name
 #+begin_src emacs-lisp
-  (defun my/make-template-file-name (file-name)
+  (defun my/template-file-name (file-name)
+    "Create file-name relative to my/template-directory"
     (concat my/template-directory file-name))
 #+end_src
 
-* straight.el
-Straight.el is the future of package management for Emacs. Get out there and
-evangelize people!
+*** my/project-root
+#+begin_src emacs-lisp
+  (setq-default my/project-root (expand-file-name "~/src/"))
+#+end_src
 
-#+INCLUDE: "../nougat/package-management/straight.org::bootstrap"
-#+INCLUDE: "../nougat/package-management/straight.org::use-package integration"
+*** my/project-directory
+#+begin_src emacs-lisp
+  (defun my/project-directory (name)
+    (concat my/project-root name))
+#+end_src
+
+*** setup external browser
+#+begin_src emacs-lisp
+  (setq browse-url-browser-function 'browse-url-chrome)
+  (setq browse-url-chrome-program "google-chrome-unstable")
+#+end_src
+
+* nixos
+NixOS ZSH module drops some PATH modification stuff in =~/.config/zsh/.zshrc= which
+causes the following message on startup:
+#+begin_src text
+  You appear to be setting environment variables ("PATH") in your .bashrc or .zshrc:
+  those files are only read by interactive shells, so you should instead set
+  environment variables in startup files like .profile, .bash_profile or .zshenv.
+  Refer to your shell’s man page for more info.
+
+  Customize ‘exec-path-from-shell-arguments’ to remove "-i" when done, or disable
+  ‘exec-path-from-shell-check-startup-files’ to disable this message.
+#+end_src
+
+The following line prevents the warning above:
+
+#+begin_src emacs-lisp
+  (setq exec-path-from-shell-check-startup-files nil)
+#+end_src
 
 * badger-theme
+
+My favorite theme, available [[https://github.com/ccann/badger-theme][here]].
+
 #+begin_src emacs-lisp
   (use-package badger-theme
     :config (load-theme 'badger t))
 #+end_src
 
+** default font
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :family "Source Code Pro" :height 145 :weight 'light)
+#+end_src
+
+** blend in the fringes
+#+begin_src emacs-lisp
+  (set-face-attribute 'fringe nil :background nil)
+#+end_src
+
+** helper for getting colors
+#+begin_src emacs-lisp
+  (defun badger-color (name)
+    (let ((name (format "badger-%s" name)))
+      (cdr (assoc name badger-colors-alist))))
+
+  ;; (badger-color "bg")
+#+end_src
+
 * emacs
+The following sections customize core Emacs settings.
 #+INCLUDE: "../nougat/emacs/autosaves.org"
 #+INCLUDE: "../nougat/emacs/backups.org"
 #+INCLUDE: "../nougat/emacs/cursor.org"
@@ -61,8 +128,6 @@ evangelize people!
 #+INCLUDE: "../nougat/emacs/editing.org"
 #+INCLUDE: "../nougat/emacs/key-bindings.org"
 #+INCLUDE: "../nougat/emacs/minor-modes.org"
-#+INCLUDE: "../nougat/emacs/modeline.org"
-
 ** exec-path from shell
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
@@ -71,136 +136,222 @@ evangelize people!
       (exec-path-from-shell-initialize)))
 #+end_src
 
+** eyeliner for modeline
+#+begin_src emacs-lisp
+  (use-package eyeliner
+    ;; :straight (eyeliner :type git :host github :repo "dustinlacewell/eyeliner")
+    :straight (eyeliner :local-repo "~/src/eyeliner")
+
+    :init
+    (setq eyeliner/warm-color (badger-color "salmon"))
+    (setq eyeliner/cool-color (badger-color "blue"))
+    (setq eyeliner/plain-color "#FFFFFF")
+
+    :config
+    (require 'eyeliner)
+    (spaceline-helm-mode 1)
+    (custom-set-faces
+     `(powerline-active2
+       ((t (:background ,(badger-color "bg")))))
+     `(powerline-inactive2
+       ((t (:background ,(badger-color "bg"))))))
+    (eyeliner/install))
+#+end_src
+
 * org-mode
-#+INCLUDE: "../nougat/packages/org-mode/setup.org::setup"
-#+INCLUDE: "../nougat/packages/org-mode/setup.org::look"
-#+INCLUDE: "../nougat/packages/org-mode/setup.org::feel"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-babel.org"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-tidy.org"
-#+INCLUDE: "../nougat/packages/org-mode/extras/nested-narrowing.org"
-#+INCLUDE: "../nougat/packages/org-mode/extras/dynamic-tag-position.org"
-
-** org-olp
-=org-olp= contains a number of elisp functions for working with Org-mode OLP paths.
-
-Get it at http://github.com/dustinlacewell/org-olp
-
-#+begin_src emacs-lisp
-  (use-package org-olp
-      :after (org)
-      :straight (org-olp :type git :repo "/Users/dustinlacewell/src/org-olp"))
-
-#+end_src
-
-** org-capture
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::set default notes file"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::bind a key for capture"
-#+INCLUDE: "../nougat/packages/org-mode/extras/org-capture.org::automatically visit new capture"
-*** capture templates
-#+begin_src emacs-lisp
-  (let* ((dnd-path-name (concat my/org-path-name "dnd/"))
-         (dnd-notes-file-name (concat dnd-path-name "campaign.org")))
-    (setq org-capture-templates
-        '(
-        ("w" "Work")
-
-        ("wj" "JIRA" entry
-         (file+olp my/notes-file-name "Workiva" "Tasks")
-         (file (my/make-template-file-name "jira-issue.org")))
-
-        ("wl" "Work Log" entry
-         (file+olp+datetree my/notes-file-name "Workiva" "Worklog")
-         "* %<%l:%M %p> - %?")
-
-        ("e" "Emacs Package" entry
-         (file+olp my/notes-file-name "Software" "Emacs" "Packages")
-         (file (my/make-template-file-name "emacs-package.org")))
-
-        ("d" "D&D")
-
-        ("do" "D&D Objective" entry
-         (file+olp dnd-notes-file-name "Objectives") "* %?")
-
-        ("dc" "D&D Character" entry
-         (file+olp dnd-notes-file-name "Characters") "* %?")
-
-        ("da" "D&D Log" entry
-         (file+olp+datetree dnd-notes-file-name "Log") "* %<%l:%M %p> - %?"))))
-
-#+end_src
-
+#+INCLUDE: "../nougat/packages/org.org::org-mode" :only-contents t
 * projectile
-#+INCLUDE: "../nougat/packages/projectile/setup.org"
-#+INCLUDE: "../nougat/packages/projectile/discover-projects.org"
-
+#+INCLUDE: "../nougat/packages/projectile.org::Projectile" :only-contents t
 * helm
-#+INCLUDE: "../nougat/packages/helm/setup.org"
-#+INCLUDE: "../nougat/packages/helm/extras/ace-jump-helm-line.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-ag.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-bookmark.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-company.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-descbinds.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-flyspell.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-org-rifle.org"
-#+INCLUDE: "../nougat/packages/helm/extras/helm-projectile.org"
+#+INCLUDE: "../nougat/packages/helm.org::*Helm" :only-contents t
+** theme customizations
+#+begin_src emacs-lisp
+  (set-face-attribute
+   'helm-selection nil
+   :inherit t
+   :background (badger-color "bg+1")
+   :foreground nil
+   :height 1.0
+   :weight 'ultra-bold
+   :inverse-video nil)
+
+  (set-face-attribute
+   'helm-source-header nil
+   :inherit nil
+   :underline nil
+   :background (badger-color "bg")
+   :foreground (badger-color "dull-red")
+   :height 1.9)
+
+  (set-face-attribute
+   'helm-header nil
+   :inherit nil
+   :height 0.8
+   :background (badger-color "bg")
+   :foreground (badger-color "teal"))
+
+  (set-face-attribute
+   'helm-separator nil
+   :height 0.8
+   :foreground (badger-color "salmon"))
+
+  (set-face-attribute
+   'helm-match nil
+   :weight 'bold
+   :foreground (badger-color "olive"))
+
+#+end_src
 
 * magit
-#+INCLUDE: "../nougat/packages/magit/setup.org"
+#+INCLUDE: "../nougat/packages/magit.org::Magit" :only-contents t
+* elfeed
+** boilerplate
+#+begin_src emacs-lisp
+    (defun advice-unadvice (sym)
+      "Remove all advices from symbol SYM."
+      (interactive "aFunction symbol: ")
+      (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+
+    (defun elfeed-font-size-hook ()
+      (buffer-face-set '(:height 1.35)))
+
+    (defun elfeed-visual-fill-hook ()
+      (visual-fill-column-mode--enable))
+
+    (defun elfeed-show-refresh-advice (entry)
+      (elfeed-font-size-hook)
+      (visual-fill-column-mode 1)
+      (setq word-wrap 1)
+      (elfeed-show-refresh))
+
+    (defun elfeed-show ()
+      (interactive)
+      (elfeed)
+      (delete-other-windows))
+#+end_src
+
+** setup
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :bind (("C-x w" . elfeed-show))
+    :config
+    (add-hook 'elfeed-search-update-hook 'elfeed-font-size-hook)
+    (advice-unadvice 'elfeed-show-entry)
+    (advice-add 'elfeed-show-entry :after 'elfeed-show-refresh-advice))
+
+  (use-package elfeed-org
+    :after (elfeed)
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/org/notes.org")))
+#+end_src
 
 * language support
-** applescript
-#+INCLUDE: "../nougat/support/applescript/apples-mode.org"
-
-** lisp
-#+INCLUDE: "../nougat/support/lisp/lispy-mode.org"
-
-** python
-#+INCLUDE: "../nougat/support/python/jedi.org"
-#+INCLUDE: "../nougat/support/python/elpy.org"
-
+#+INCLUDE: "../nougat/support/applescript.org"
+#+INCLUDE: "../nougat/support/elisp.org"
+#+INCLUDE: "../nougat/support/markdown.org"
+#+INCLUDE: "../nougat/support/python.org"
+#+INCLUDE: "../nougat/support/typescript.org"
+#+INCLUDE: "../nougat/support/yaml.org"
 ** f#
-#+INCLUDE: "../nougat/support/fsharp/fsharp-mode.org"
+#+INCLUDE: "../nougat/support/fsharp.org::f#" :only-contents t
 
-** markdown
-#+INCLUDE: "../nougat/support/markdown/markdown-mode.org"
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'fsharp-mode
+    (add-to-list 'exec-path "/nix/var/nix/profiles/default/bin")
+    (add-to-list 'exec-path (expand-file-name "~/.nix-profile/bin"))
+    (add-to-list 'auto-mode-alist '("\\.fs[iylx]?$" . fsharp-mode)))
+#+END_SRC
 
 * tooling support
-
-** docker
-#+INCLUDE: "../nougat/support/docker/dockerfile-mode.org"
-
-** nix
-#+INCLUDE: "../nougat/support/nix/nix-mode.org"
-#+INCLUDE: "../nougat/support/nix/nix-sandbox.org"
-
+#+INCLUDE: "../nougat/support/docker.org"
+#+INCLUDE: "../nougat/support/nix.org"
 * hydra
-#+INCLUDE: "../nougat/packages/hydra/setup.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-hera.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-bookmarks.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-elisp.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-helm.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-help.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-mark.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-org.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-projectile.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-python.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-register.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-window.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-yank-pop.org"
-#+INCLUDE: "../nougat/packages/hydra/extras/hydra-zoom.org"
 
-* life support
-With the use of [[https://github.com/dustinlacewell/org-ls][org-ls]] I load an org-file which contains a number of babel
-source-blocks and utility elisp. These support functions are utilized in my use of
-org-mode and to build hydras.
+#+include: "../nougat/packages/hydra.org::Hydra" :only-contents t
+#+include: "../nougat/packages/hydras/hydra-bookmarks.org"
+#+include: "../nougat/packages/hydras/hydra-help.org"
+#+include: "../nougat/packages/hydras/hydra-mark.org"
+#+include: "../nougat/packages/hydras/hydra-projectile.org"
+#+include: "../nougat/packages/hydras/hydra-register.org"
+#+include: "../nougat/packages/hydras/hydra-window.org"
+#+include: "../nougat/packages/hydras/hydra-yank-pop.org"
+#+include: "../nougat/packages/hydras/hydra-zoom.org"
+#+include: "../nougat/packages/hydras/major-modes/emacs-lisp-mode.org"
+#+include: "../nougat/packages/hydras/major-modes/org-mode.org"
 
 #+begin_src emacs-lisp
-  (use-package org-ls
-    :after (org hydra)
-    :straight (org-ls :type git :host github :repo "dustinlacewell/org-ls")
-    :config
-    (require 'org-ls)
-    (org-ls-load-file (my/make-org-file-name "support.org")))
+  (global-set-key (kbd "C-<f19>") 'major-mode-hydra)
+#+end_src
+
+* spotify
+#+begin_src emacs-lisp
+  ;; (use-package spot4e
+  ;;   :straight (spot4e :type git :host github :local-repo "~/src/spot4e")
+  ;;   :config
+  ;;   (setq spot4e-refresh-token "AQDA5zMq9Juoi76685iFALQWp17uWpZVTCPCqTMI2rZFUwX-lmH7Z9idbhPM-SBbTXYWYNyL9pwgEoazggQXZe3kpeavxS4DJYdg5d-5pHKRYpv_jZLx2vUr1pIxZvcz8_k")
+  ;;   (setq spot4e-access-token nil)
+  ;;   (run-with-timer 0 (* 60 59) 'spot4e-refresh))
+
+  ;; (spot4e-authorize)
+
+  ;; (pretty-hydra-define hydra-spotify (:color red :hint nil)
+  ;;   ("Player" (("h" (spot4e-player-next) "next")
+  ;;              ("l" (spot4e-player-previous) "previous")
+  ;;              ("j" (spot4e-player-pause) "pause")
+  ;;              ("k" (spot4e-player-play) "play")
+  ;;              ("v" (spot4e-set-volume) "volume"))
+
+  ;;    "Search" (("t" (spot4e-helm-search-tracks) "tracks")
+  ;;              ("a" (spot4e-helm-search-artists) "artists" :push t)
+  ;;              ("A" (spot4e-helm-search-albums ) "albums")
+  ;;              ("r" (spot4e-helm-search-recent-tracks ) "recent")
+  ;;              ("c" (spot4e-helm-search-categories) "categories")))
+  ;;   (("<f19>" (hera-pop) "nil" :color blue)
+  ;;    ("R" (spot4e-refresh) "nil" :color red)))
+
+  ;; (hydra-spotify/body)
+#+end_src
+
+* entrypoint
+** ep-notes-file
+#+begin_src emacs-lisp
+  (setq ep-notes-file (my/org-file-name "notes.org"))
+#+end_src
+
+** ep-notes-find-file
+#+begin_src emacs-lisp
+  (defun ep-notes-find-file () (find-file ep-notes-file))
+#+end_src
+
+** ep-notes-visit
+#+begin_src emacs-lisp
+  (defun ep-notes-visit (&rest olp) (org-olp-visit ep-notes-file olp))
+  ;; (ep-notes-visit "Workiva" "Runbooks")
+#+end_src
+
+** ep-notes-select-then-visit
+#+begin_src emacs-lisp
+  (defun ep-notes-select-then-visit (&rest olp) (org-olp-select-then-visit ep-notes-file olp))
+  ;; (ep-notes-select-then-visit "Workiva" "Tasks")
+#+end_src
+
+** hydra-default
+
+#+begin_src emacs-lisp
+  (nougat-hydra hydra-default (:color blue)
+    ("Editing"
+     (("p" (hera-push 'hydra-projectile/body) "projectile")
+      ("r" (hera-push 'hydra-registers/body) "registers")
+      ("m" (hera-push 'hydra-mark/body) "mark"))
+     "UI"
+     (("w" (hera-push 'hydra-window/body) "windows")
+      ("z" (hera-push 'hydra-zoom/body) "zoom"))
+     "Help"
+     (("h" (hera-push 'hydra-help/body) "help"))))
+
+  (global-set-key (kbd "<f19>") (lambda () (interactive) (hera-start 'hydra-default/body)))
+
+
 #+end_src
 

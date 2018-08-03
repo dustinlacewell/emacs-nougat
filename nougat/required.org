@@ -1,0 +1,79 @@
+* straight.el
+[[https://github.com/raxod502/straight.el][straight.el]] is an alternative to package.el with many advantages including the
+ability to integrate with [[https://github.com/jwiegley/use-package][use-package]] and installing packages from git or github.
+
+** bootstrap
+#+begin_src emacs-lisp
+  (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+        (bootstrap-version 3))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+#+end_src
+
+** use-package integration
+#+begin_src emacs-lisp
+  (setq straight-use-package-by-default t)
+  (straight-use-package 'use-package)
+  (use-package git) ;; ensure we can install from git sources
+#+end_src
+
+* dependencies
+The following package dependencies are used throughout the rest of the
+configuration. They provide contemporary APIs for working with various elisp data
+structures.
+
+#+begin_src emacs-lisp
+  (use-package dash :config (require 'dash))    ;; lists
+  (use-package ht :config (require 'ht))        ;; hash-tables
+  (use-package s :config (require 's))          ;; strings
+  (use-package a :config (require 'a))          ;; association lists
+#+end_src
+
+* boilerplate
+The following functions are required by some of the snippets in Emacs-nougat.
+#+begin_src emacs-lisp
+  ;; lets user override default bindings
+  (defun global-kbd-or (&rest args)
+    (let* ((pairs (-partition 2 args)))
+      (cl-loop for pair in pairs
+               for target = (car pair)
+               for default = (cadr pair)
+               for target-name = (symbol-name target)
+               for override-name = (format "kbd-%s" target-name)
+               for override-symbol = (make-symbol override-name)
+               if (boundp override-symbol)
+               do (global-set-key (kbd (eval override-symbol)) target)
+               else
+               do (global-set-key (kbd default) target))))
+
+  (defun define-kbd-or (&rest args)
+    (let* ((triplets (-partition 3 args)))
+      (cl-loop for triplet in triplets
+               for mode = (nth 0 triplet)
+               for target = (nth 1 triplet)
+               for default = (nth 2 triplet)
+               for target-name = (symbol-name target)
+               for override-name = (format "kbd-%s" target-name)
+               for override-symbol = (make-symbol override-name)
+               if (boundp override-symbol)
+               do (define-key mode (kbd (eval override-symbol)) target)
+               else
+               do (define-key mode (kbd default) target))))
+
+  (defun kbd-or (target default)
+    (if (boundp target)
+        (kbd (eval target))
+      (kbd default)))
+
+  (defun var-or (target default)
+    (if (boundp target)
+        (eval target)
+      default))
+#+end_src
+

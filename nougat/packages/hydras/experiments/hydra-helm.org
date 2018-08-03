@@ -1,0 +1,74 @@
+* hydra-helm
+This hydra is useful for navigating and invoking features inside Helm buffers.
+** helm-persistent-delete-marked
+#+BEGIN_SRC emacs-lisp
+  (defun helm-persistent-delete-marked ()
+    "Kill buffer without quitting helm."
+    (interactive)
+    (if (equal (cdr (assoc 'name (helm-get-current-source)))
+               "Buffers")
+        (with-helm-alive-p
+          (helm-attrset 'kill-action
+                        '(helm-persistent-kill-buffers . never-split))
+          (helm-execute-persistent-action 'kill-action))
+      (user-error "Only works for buffers")))
+#+end_src
+
+** helm-persistent-kill-buffers
+#+begin_src emacs-lisp
+  (defun helm-persistent-kill-buffers (_buffer)
+    (unwind-protect
+        (dolist (b (helm-marked-candidates))
+          (helm-buffers-persistent-kill-1 b))
+      (with-helm-buffer
+        (setq helm-marked-candidates nil
+              helm-visible-mark-overlays nil))
+      (helm-force-update (helm-buffers--quote-truncated-buffer
+                          (helm-get-selection)))))
+#+end_src
+
+** hydra-helm
+#+begin_src emacs-lisp
+     (defhydra hydra-helm (:hint nil :color pink)
+       "
+    select   ends    sources   other
+
+      k       V        K         p   [SPC] mark          [.] view
+      ↑       ↑        ↑         ↑    [t]  toggle all    [f] follow: %(helm-attr 'follow)
+      |       |        |         c    [u]  unmark all    [y] yank selection
+      ↓       ↓        ↓         ↓    [d]  delete marked [w] toggle windows
+      j       v        J         n
+               "
+       ("<f19>" 'hydra-pop :color blue)
+       ("j" helm-next-line)
+       ("k" helm-previous-line)
+       ("V" helm-beginning-of-buffer)
+       ("v" helm-end-of-buffer)
+       ("J" helm-next-source)
+       ("K" helm-previous-source)
+       ("p" helm-scroll-other-window-down)
+       ("n" helm-scroll-other-window)
+       ("c" helm-recenter-top-bottom-other-window)
+       ("SPC" helm-toggle-visible-mark)
+       ("t" helm-toggle-all-marks)
+       ("u" helm-unmark-all)
+       ("." helm-execute-persistent-action)
+       ("d" helm-persistent-delete-marked)
+       ("y" helm-yank-selection)
+       ("w" helm-toggle-resplit-and-swap-windows)
+       ("f" helm-follow-mode)
+       ("RET" helm-maybe-exit-minibuffer))
+
+     (hera-register 'minibuffer-inactive-mode 'hydra-helm/body)
+
+  (nougat-hydra minibuffer-inactive-mode (:color red)
+    ("Move"
+     (("k" helm-previous-line "previous candidate")
+      ("j" helm-next-line "next candidate")
+      ("K" helm-previous-source "previous source")
+      ("J" helm-next-source "next source")
+      ("V" helm-beginning-of-buffer "buffer start")
+      ("v" helm-end-of-buffer "buffer end"))))
+
+#+END_SRC
+

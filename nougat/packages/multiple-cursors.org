@@ -1,0 +1,23 @@
+* Multiple Cursors
+Multiple Cursors is an emacs package to provide Sublime Text-like multiple
+selections.
+
+Mark a word or symbol then use the following bindings:
+
+| default key | override symbol                | description                |
+|-------------+--------------------------------+----------------------------|
+| C->         | kbd-mc/mark-next-like-this     | create cursor ahead        |
+| C-<         | kbd-mc/mark-previous-like-this | create cursor behind       |
+| C-c C-<     | kbd-mc/mark-all-like-this      | create all matched cursors |
+| C-c C->     | kbd-mc/mark-all-dwim           | smartly create cursors     |
+
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :config
+    (require 'multiple-cursors)
+    (global-kbd-or 'mc/mark-next-like-this "C->")
+    (global-kbd-or 'mc/mark-previous-like-this "C-<")
+    (global-kbd-or 'mc/mark-all-like-this "C-c C-<")
+    (global-kbd-or 'mc/mark-all-dwim "C-c C->"))
+
+#+end_src

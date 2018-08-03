@@ -62,8 +62,6 @@ Matching closed brackets are inserted for any typed open bracket.
             (set-face-foreground (intern rainbow-var-name) col))
           (setq i (+ i 1))))))
 
-
-
   (use-package rainbow-delimiters :commands rainbow-delimiters-mode :hook ...
     :init
     (setq rainbow-delimiters-max-face-count 16)
@@ -76,8 +74,8 @@ Matching closed brackets are inserted for any typed open bracket.
   (show-paren-mode 1)
   (setq show-paren-delay 0)
   (require 'paren)
-  (set-face-background 'show-paren-match (face-background 'default))
-  (set-face-background 'show-paren-mismatch (face-background 'default))
+  (set-face-background 'show-paren-match nil)
+  (set-face-background 'show-paren-mismatch nil)
   (set-face-foreground 'show-paren-match "#ff0")
   (set-face-foreground 'show-paren-mismatch "#f00")
   (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
@@ -85,7 +83,7 @@ Matching closed brackets are inserted for any typed open bracket.
 
 ** which-key-mode
 #+BEGIN_SRC emacs-lisp
-  (use-package which-key              ;;; Display available keybindings in popup
+  (use-package which-key
     :diminish which-key-mode
     :config
     ;; sort single chars alphabetically P p Q q

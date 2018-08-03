@@ -1,0 +1,8 @@
+* yaml
+** yaml-mode
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :config
+    (require 'yaml-mode)
+    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+#+end_src

@@ -1,5 +1,0 @@
-* helm-bookmark
-#+begin_src emacs-lisp
-  (require 'helm-bookmark)
-#+end_src
-

@@ -1,5 +1,0 @@
-* elpy
-#+begin_src emacs-lisp
-  (use-package elpy)
-#+end_src
-

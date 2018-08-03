@@ -1,0 +1,11 @@
+* Ranger
+[[https://github.com/ralesi/ranger.el][Ranger]] is a dired add-on that lets you quickly browse, preview and open files.
+
+Use (=C-c r= / =kbd-ranger=) to open it.
+#+begin_src emacs-lisp
+  (use-package ranger
+    :commands ranger
+    :config
+    (global-kbd-or 'ranger "C-c r"))
+
+#+end_src

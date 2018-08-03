@@ -1,0 +1,92 @@
+* Helm
+
+Helm is a fast completion/selection framework for Emacs. It pops up a buffer with
+choices which you narrows by fuzzy search. This can be used for finding files,
+switching buffers, etc.
+
+The following keys are bound by default:
+
+| default key | override symbol         | description                |
+|-------------+-------------------------+----------------------------|
+| M-x         | kbd-helm-M-x            | execute commands           |
+| C-h f       | kbd-helm-apropos        | get help for any symbol    |
+| C-x C-f     | kbd-helm-find-files     | find files                 |
+| C-c y       | kbd-helm-show-kill-ring | view kill ring history     |
+| C-x C-r     | kbd-helm-recentf        | open recently viewed files |
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :config
+    (helm-mode 1)
+    (require 'helm-config)
+    (global-kbd-or 'helm-M-x "M-x"
+                   'helm-apropos "C-h f"
+                   'helm-find-files "C-x C-f"
+                   'helm-mini "C-x b"
+                   'helm-show-kill-ring "C-c y"
+                   'helm-recentf "C-x C-r"))
+#+END_SRC
+
+** ace-jump-helm-line
+Use (=M-;= / =kbd-helm-ace-jump=) to show a unique letter combination next to each Helm
+candidate. Pressing a combination instantly selects that candidate.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'helm
+    (use-package ace-jump-helm-line
+      :commands ace-jump-helm-line
+      :config (define-key helm-map
+              (or-kbd kbd-helm-ace-jump "M-;")
+              'ace-jump-helm-line)))
+#+end_src
+
+** helm-bookmarks
+Use (=C-x C-b= / =kbd-helm-bookmarks=) to manage bookmarks with Helm.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'helm
+    (require 'helm-bookmark)
+    (global-kbd-or 'helm-bookmark "C-x C-b"))
+#+end_src
+
+** helm-descbinds
+Use (=C-h b= / =kbd-helm-descbinds=) to inspect current bindings with Helm.
+#+begin_src emacs-lisp
+  (use-package helm-descbinds
+    :after (helm)
+    :commands helm-descbinds
+    :config
+    (global-kbd-or 'helm-descbinds "C-h b"))
+#+end_src
+
+** helm-flyspell
+With =flyspell-mode= on, use (=C-;= / =kbd-helm-flyspell=) after a word to correct it with
+Helm.
+#+begin_src emacs-lisp
+  (use-package helm-flyspell
+    :after (helm)
+    :commands helm-flyspell-correct
+    :config (global-kbd-or 'helm-flyspell-correct "C-;"))
+#+end_src
+
+** helm-org-rifle
+Use (=M-r= / =kbd-helm-org-rifle=) to rifle through the current org-mode buffer or
+all open org-mode buffers if one is not focused.
+#+begin_src emacs-lisp
+  (use-package helm-org-rifle
+    :after (helm org)
+    :commands helm-org-rifle-current-buffer
+    :config
+    (define-kbd-or
+      org-mode-map 'helm-org-rifle-current-buffer "M-r"))
+#+end_src
+
+** helm-projectile
+Use (=C-x c p= / =kbd-helm-projectile=) to view the buffers and files in the current
+Projectile project.
+#+begin_src emacs-lisp
+  (use-package helm-projectile
+      :after (helm projectile)
+      :commands helm-projectile
+      :config
+      (global-kbd-or 'helm-projectile "C-x c p"))
+#+end_src
+

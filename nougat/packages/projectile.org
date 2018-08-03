@@ -1,0 +1,23 @@
+* Projectile
+[[https://github.com/bbatsov/projectile][Projectile]] offers a number of features related to project interaction. It can track
+the root directories and sibling files of files you edit automatically. Combined with
+Helm, you can very quickly navigate related files.
+
+Projectile's default prefix is =C-c p=
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :config
+    (setq projectile-enable-caching t)
+    (projectile-mode t))
+#+end_src
+
+** project discovery
+Customize =nougat-project-root= to set the location of the majority of your
+projects/repositories.
+#+begin_src emacs-lisp
+  (projectile-discover-projects-in-directory
+   (file-name-as-directory
+    (expand-file-name
+     (var-or 'nougat-project-root "~/src"))))
+#+end_src

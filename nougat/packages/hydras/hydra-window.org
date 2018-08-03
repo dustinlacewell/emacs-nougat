@@ -1,0 +1,24 @@
+* hydra-window
+#+begin_src emacs-lisp
+  (use-package ace-window)
+  (winner-mode 1)
+
+  (nougat-hydra hydra-window (:color red)
+    ("Jump"
+     (("h" windmove-left "left")
+      ("l" windmove-right "right")
+      ("k" windmove-up "up")
+      ("j" windmove-down "down")
+      ("a" ace-select-window "ace"))
+     "Split"
+     (("q" split-window-right "left")
+      ("r" (progn (split-window-right) (call-interactively 'other-window)) "right")
+      ("e" split-window-below "up")
+      ("w" (progn (split-window-below) (call-interactively 'other-window)) "down"))
+     "Do"
+     (("d" delete-window "delete")
+      ("o" delete-other-windows "delete others")
+      ("u" winner-undo "undo")
+      ("R" winner-redo "redo"))))
+#+end_src
+

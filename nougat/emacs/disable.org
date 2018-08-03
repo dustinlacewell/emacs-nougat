@@ -1,4 +1,8 @@
 * disable
+Turn off various UI features to achieve a minimal, distraction free
+experience. Additionally, all configuration should live inside version-controlled
+files so the Emacs customizations file is also disabled.
+
 ** menubar
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode -1)
@@ -21,8 +25,6 @@
 #+END_SRC
 
 ** customizations file
-Since all the configuration should live in this version-controlled file, discard any
-customizations made inside Emacs.
 #+BEGIN_SRC emacs-lisp
   (setq custom-file (make-temp-file ""))
 #+END_SRC

@@ -1,0 +1,19 @@
+* hydra-registers
+#+begin_src emacs-lisp
+  (nougat-hydra hydra-registers (:color pink)
+    ("Point"
+     (("r" point-to-register "save point")
+      ("j" jump-to-register "jump")
+      ("v" view-register "view all"))
+     "Text"
+     (("c" copy-to-register "copy region")
+      ("C" copy-rectangle-to-register "copy rect")
+      ("i" insert-register "insert")
+      ("p" prepend-to-register "prepend")
+      ("a" append-to-register "append"))
+     "Macros"
+     (("m" kmacro-to-register "store")
+      ("e" jump-to-register "execute"))))
+
+#+end_src
+

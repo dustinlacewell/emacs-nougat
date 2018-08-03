@@ -1,3 +1,4 @@
+;; bootstrap straight.el
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
   (unless (file-exists-p bootstrap-file)
@@ -13,6 +14,7 @@
 (straight-use-package 'use-package)
 (use-package git)
 
+;; straight.el org fix boilerplate
 (defun fix-org-git-version ()
   "The Git version of org-mode.
   Inserted by installing org-mode or when a release is made."
@@ -40,39 +42,39 @@
                "--abbrev=0"
                "HEAD")))))
 
-(defun destination-from-source (source ext)
+;; export boilerplate
+(defun destination-file-name-from-source (source ext)
   (let* ((expanded (expand-file-name source))
          (sans (file-name-sans-extension expanded))
          (file-name (format "%s.%s" sans ext)))
     file-name))
 
-;; (destination-from-source "~/org/dnd/character-sheet.org" "el")
-
-(defun render-from-source (source)
+(defun render-file-name-from-source (source)
   (let* ((expanded (expand-file-name source))
          (sans (file-name-sans-extension expanded))
          (extension (file-name-extension source))
          (file-name (format "%s.rendered.%s" sans extension)))
     file-name))
 
-;; (render-from-source "~/org/dnd/character-sheet.org")
-
 (defun install-org ()
   (use-package org
     :mode ("\\.org\\'" . org-mode)
     :config
-    ;; This forces straight to load the package immediately in an attempt to avoid the
-    ;; Org that ships with Emacs.
+    ;; This forces straight to load the package immediately in an attempt to avoid
+    ;; the Org that ships with Emacs.
     (require 'org)
     (require 'ox-org)
+    (use-package htmlize
+      :config (require 'htmlize))
     (defalias #'org-git-version #'fix-org-git-version)
     (defalias #'org-release #'fix-org-release)))
 
 (defun export (source ext cont &optional destination keep-export)
   (install-org)
   (let* ((source (expand-file-name source))
-         (render (render-from-source source))
-         (destination (or destination (destination-from-source source ext))))
+         (render (render-file-name-from-source source))
+         (destination (or destination
+                          (destination-file-name-from-source source ext))))
     (find-file source)
     (funcall cont source render destination)
     (when (and (file-exists-p render) (not keep-export))
@@ -82,18 +84,14 @@
   (org-export-to-file 'org render)
   (org-babel-tangle-file render destination 'emacs-lisp))
 
+(defun do-html (source render destination)
+  (org-export-to-file 'org render)
+  (find-file render)
+  (org-export-to-file 'html destination))
+
 (defun to-elisp (source &optional destination keep-export)
   (interactive)
   (export source "el" 'do-elisp destination keep-export))
-
-;; (to-elisp (expand-file-name "~/src/emacs-nougat/user-outlines/ldlework.org"))
-
-;; TODO refactor these ^ v
-
-(defun do-html (source render destination)
-  (org-export-to-file 'org output-file-name)
-  (find-file output-file-name)
-  (org-export-to-file 'html html-file-name))
 
 (defun to-html (source &optional destination keep-export)
   (interactive)

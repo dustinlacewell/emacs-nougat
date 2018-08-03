@@ -1,0 +1,70 @@
+* org-mode
+** hydra-org-goto-first-sibling
+#+begin_src emacs-lisp
+  (defun hydra-org-goto-first-sibling () (interactive)
+         (org-backward-heading-same-level 99999999))
+#+end_src
+
+** hydra-org-goto-last-sibling
+#+begin_src emacs-lisp
+  (defun hydra-org-goto-last-sibling () (interactive)
+         (org-forward-heading-same-level 99999999))
+#+end_src
+
+** hydra-org-parent-level
+#+begin_src emacs-lisp
+  (defun hydra-org-parent-level ()
+    (interactive)
+    (let ((o-point (point)))
+      (if (save-excursion
+            (beginning-of-line)
+            (looking-at org-heading-regexp))
+          (progn
+            (call-interactively 'outline-up-heading)
+            (org-cycle-internal-local))
+        (progn
+          (call-interactively 'org-previous-visible-heading)
+          (org-cycle-internal-local)))
+      (when (and (/= o-point (point))
+                 org-tidy-p)
+        (call-interactively 'hydra-org-tidy))))
+
+ #+end_src
+
+** hydra-org-child-level
+#+begin_src emacs-lisp
+  (defun hydra-org-child-level ()
+    (interactive)
+    (org-show-entry)
+    (org-show-children)
+    (when (not (org-goto-first-child))
+      (when (save-excursion
+              (beginning-of-line)
+              (looking-at org-heading-regexp))
+        (next-line))))
+#+end_src
+
+** hydra
+ #+begin_src emacs-lisp
+   (nougat-hydra hydra-org (:color red :major-mode org-mode)
+     ("Shift"
+      (("K" org-move-subtree-up "up")
+       ("J" org-move-subtree-down "down")
+       ("h" org-promote-subtree "promote")
+       ("l" org-demote-subtree "demote"))
+      "Travel"
+      (("p" org-backward-heading-same-level "backward")
+       ("n" org-forward-heading-same-level "forward")
+       ("j" hydra-org-child-level "to child")
+       ("k" hydra-org-parent-level "to parent")
+       ("a" hydra-org-goto-first-sibling "first sibling")
+       ("e" hydra-org-goto-last-sibling "last sibling"))
+      "Perform"
+      (("r" (lambda () (interactive)
+              (helm-org-rifle-current-buffer)
+              (call-interactively 'org-cycle)
+              (call-interactively 'org-cycle)) "rifle")
+       ("v" avy-org-goto-heading-timer "avy")
+       ("L" org-toggle-link-display "toggle links"))))
+#+end_src
+

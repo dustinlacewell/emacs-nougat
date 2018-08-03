@@ -1,7 +1,0 @@
-* dockerfile-mode
-#+begin_src emacs-lisp
-  (use-package dockerfile-mode
-    :config
-    (require 'dockerfile-mode)
-    (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
-#+end_src

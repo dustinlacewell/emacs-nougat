@@ -1,0 +1,26 @@
+** hydra-projectile
+#+begin_src emacs-lisp
+  (defun projectile-dwim ()
+    (interactive)
+    (if (string= "-" (projectile-project-name))
+        (helm-projectile-switch-project)
+      (hydra-projectile/body)))
+
+  (nougat-hydra hydra-projectile (:color blue)
+    ("Open"
+     (("f" helm-projectile-find-file "file")
+      ("r" helm-projectile-recent "recent")
+      ("p" helm-projectile-switch-project "project")
+      ("d" helm-projectile-find-dir "directory"))
+     "Search"
+     (("o" projectile-multi-occur "occur")
+      ("a" projectile-ag))
+     "Buffers"
+     (("b" helm-projectile-switch-to-buffer "switch")
+      ("k" helm-projectile-kill-buffers "kill"))
+     "Cache"
+     (("C" projectile-invalidate-cache "clear")
+      ("x" projectile-remove-known-project "remove project")
+      ("X" projectile-cleanup-known-projects "cleanup"))))
+
+#+end_src

@@ -1,0 +1,13 @@
+* hydra-yank-pop
+#+begin_src emacs-lisp
+  (nougat-hydra hydra-yank-pop (:color red)
+    ("Yank/Pop"
+     (("y" (yank-pop 1) "previous")
+      ("Y" (yank-pop -1) "next")
+      ("l" helm-show-kill-ring "list" :color blue))))
+
+  (global-set-key
+   (kbd (var-or 'kbd-hydra-yank-pop "C-y"))
+   (lambda () (interactive) (yank) (hydra-yank-pop/body)))
+#+end_src
+
