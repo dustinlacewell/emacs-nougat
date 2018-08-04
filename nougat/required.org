@@ -29,6 +29,7 @@ configuration. They provide contemporary APIs for working with various elisp dat
 structures.
 
 #+begin_src emacs-lisp
+  (require 'cl)
   (use-package dash :config (require 'dash))    ;; lists
   (use-package ht :config (require 'ht))        ;; hash-tables
   (use-package s :config (require 's))          ;; strings
