@@ -160,6 +160,17 @@ The following sections customize core Emacs settings.
 
 * org-mode
 #+INCLUDE: "../nougat/packages/org.org::org-mode" :only-contents t
+** org-ql
+#+begin_src emacs-lisp
+  (use-package org-ql
+    :straight (org-ql :type git :host github :repo "alphapapa/org-agenda-ng"
+                :files ("org-ql.el")))
+
+  (use-package org-olp
+    :straight (org-olp :type git :local-repo "~/src/org-olp")
+    :config (require 'org-olp))
+#+end_src
+
 * projectile
 #+INCLUDE: "../nougat/packages/projectile.org::Projectile" :only-contents t
 * helm
@@ -268,6 +279,23 @@ The following sections customize core Emacs settings.
 #+INCLUDE: "../nougat/support/nix.org"
 * hydra
 
+I have =<f18>= bound to caps-lock and =<f19>= as the key second-to-the-right of
+spacebar. I use these for closing hydras.
+
+#+begin_src emacs-lisp
+  (defun my/hydra-dwim ()
+    (interactive)
+    (-let (((&alist major-mode mode) major-mode-hydra--body-cache))
+      (if mode (progn
+                 (push 'hydra-default/body hera--stack)
+                 (major-mode-hydra))
+        (hera-start 'hydra-default/body))))
+
+  (setq kbd-hera-pop "<f18>")
+  (global-set-key (kbd "<f18>") 'my/hydra-dwim)
+  (global-set-key (kbd "M-<f18>") (lambda () (interactive) (hera-start 'hydra-default/body)))
+#+end_src
+
 #+include: "../nougat/packages/hydra.org::Hydra" :only-contents t
 #+include: "../nougat/packages/hydras/hydra-bookmarks.org"
 #+include: "../nougat/packages/hydras/hydra-help.org"
@@ -280,8 +308,12 @@ The following sections customize core Emacs settings.
 #+include: "../nougat/packages/hydras/major-modes/emacs-lisp-mode.org"
 #+include: "../nougat/packages/hydras/major-modes/org-mode.org"
 
+** major-mode hydra key
+I have =<f19>= bound to the second-key right of spacebar. I use it to open any
+available major-mode hydra.
+
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-<f19>") 'major-mode-hydra)
+  (global-set-key (kbd "<f19>") 'major-mode-hydra)
 #+end_src
 
 * spotify
@@ -338,6 +370,17 @@ The following sections customize core Emacs settings.
 
 ** hydra-default
 #+begin_src emacs-lisp
+  (require 'org-olp)
+  (nougat-hydra hydra-notes (:color blue)
+    ("Notes"
+     (("f" (org-olp-find my/notes-file-name) "find")
+      ("t" (org-olp-visit
+            my/notes-file-name
+            '("Tasks")) "tasks")
+      ("p" (org-olp-visit
+            my/notes-file-name
+            '("Software" "Emacs" "Packages")) "emacs packages"))))
+
   (nougat-hydra hydra-default (:color blue)
     ("Editing"
      (("p" (hera-push 'hydra-projectile/body) "projectile")
@@ -348,10 +391,8 @@ The following sections customize core Emacs settings.
      (("w" (hera-push 'hydra-window/body) "windows")
       ("z" (hera-push 'hydra-zoom/body) "zoom"))
      "Help"
-     (("h" (hera-push 'hydra-help/body) "help"))))
-
-  (global-set-key (kbd "<f19>") (lambda () (interactive) (hera-start 'hydra-default/body)))
-
-
+     (("h" (hera-push 'hydra-help/body) "help"))
+     "Jump"
+     (("n" (hera-push 'hydra-notes/body) "notes"))))
 #+end_src
 
