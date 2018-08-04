@@ -1,0 +1,123 @@
+#+title: zacts's init.el
+#+description: A literate programming style exposition of my Emacs configuration
+#+language: en
+#+startup: overview indent align
+#+babel: :cache no
+#+options: ^:nil num:nil tags:nil
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+html_head: <link rel="stylesheet" type="text/css" href="https://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+html_head: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+html_head: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
+#+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+#+html_head: <script type="text/" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+
+* setup
+
+The following sections take care of bootstrapping =straight.el= and defining some
+utility elisp that is used throughout the rest of the configuration.
+
+#+INCLUDE: "../nougat/required.org"
+
+* badger-theme
+
+My favorite theme, available [[https://github.com/ccann/badger-theme][here]].
+
+#+begin_src emacs-lisp
+  (use-package badger-theme
+    :config (load-theme 'badger t))
+#+end_src
+
+** default font
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :family "CHANGEME" :height 145 :weight 'light)
+#+end_src
+
+** blend in the fringes
+#+begin_src emacs-lisp
+  (set-face-attribute 'fringe nil :background nil)
+#+end_src
+
+** helper for getting colors
+#+begin_src emacs-lisp
+  (defun badger-color (name)
+    (let ((name (format "badger-%s" name)))
+      (cdr (assoc name badger-colors-alist))))
+#+end_src
+
+* emacs
+The following sections customize core Emacs settings.
+#+INCLUDE: "../nougat/emacs/autosaves.org"
+#+INCLUDE: "../nougat/emacs/backups.org"
+#+INCLUDE: "../nougat/emacs/cursor.org"
+#+INCLUDE: "../nougat/emacs/disable.org"
+#+INCLUDE: "../nougat/emacs/editing.org"
+#+INCLUDE: "../nougat/emacs/key-bindings.org"
+#+INCLUDE: "../nougat/emacs/minor-modes.org"
+* org-mode
+#+INCLUDE: "../nougat/packages/org.org::org-mode" :only-contents t
+* projectile
+#+INCLUDE: "../nougat/packages/projectile.org::Projectile" :only-contents t
+* helm
+#+INCLUDE: "../nougat/packages/helm.org::*Helm" :only-contents t
+** theme customizations
+#+begin_src emacs-lisp
+  (set-face-attribute
+   'helm-selection nil
+   :inherit t
+   :background (badger-color "bg+1")
+   :foreground nil
+   :height 1.0
+   :weight 'ultra-bold
+   :inverse-video nil)
+
+  (set-face-attribute
+   'helm-source-header nil
+   :inherit nil
+   :underline nil
+   :background (badger-color "bg")
+   :foreground (badger-color "dull-red")
+   :height 1.9)
+
+  (set-face-attribute
+   'helm-header nil
+   :inherit nil
+   :height 0.8
+   :background (badger-color "bg")
+   :foreground (badger-color "teal"))
+
+  (set-face-attribute
+   'helm-separator nil
+   :height 0.8
+   :foreground (badger-color "salmon"))
+
+  (set-face-attribute
+   'helm-match nil
+   :weight 'bold
+   :foreground (badger-color "olive"))
+
+#+end_src
+
+* magit
+#+INCLUDE: "../nougat/packages/magit.org::Magit" :only-contents t
+* language support
+#+INCLUDE: "../nougat/support/elisp.org"
+* hydra
+#+include: "../nougat/packages/hydra.org::Hydra" :only-contents t
+#+include: "../nougat/packages/hydras/hydra-bookmarks.org"
+#+include: "../nougat/packages/hydras/hydra-help.org"
+#+include: "../nougat/packages/hydras/hydra-mark.org"
+#+include: "../nougat/packages/hydras/hydra-projectile.org"
+#+include: "../nougat/packages/hydras/hydra-register.org"
+#+include: "../nougat/packages/hydras/hydra-window.org"
+#+include: "../nougat/packages/hydras/hydra-yank-pop.org"
+#+include: "../nougat/packages/hydras/hydra-zoom.org"
+#+include: "../nougat/packages/hydras/major-modes/emacs-lisp-mode.org"
+#+include: "../nougat/packages/hydras/major-modes/org-mode.org"
+
+** major-mode hydra key
+I have =CHANGEME= bound to open any available major-mode hydra.
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "CHANGEME") 'major-mode-hydra)
+#+end_src
