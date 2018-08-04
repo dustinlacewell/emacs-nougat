@@ -27,8 +27,8 @@ Manage your bookmarks. Depends on =helm=.
       (message (format "Bookmark created: %s" name))))
 
   (nougat-hydra hydra-bookmarks (:color blue)
-    ("Bookmarks" (("a" hydra--set-bookmark "add this")
+    ("Bookmarks" (("a" (hydra--set-bookmark) "add this")
                   ("n" (hydra--set-bookmark (read-from-minibuffer "Name")) "add named")
-                  ("l" helm-bookmarks "list all"))))
+                  ("l" (helm-bookmarks) "list all"))))
 #+end_src
 
