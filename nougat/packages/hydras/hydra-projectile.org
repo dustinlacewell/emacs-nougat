@@ -1,24 +1,28 @@
 * hydra-projectile
 #+begin_src emacs-lisp
-  (defun projectile-dwim ()
-    (interactive)
-    (if (string= "-" (projectile-project-name))
-        (helm-projectile-switch-project)
-      (hydra-projectile/body)))
-
-  (nougat-hydra hydra-projectile (:color blue)
-    ("Open"
-     (("f" (helm-projectile-find-file-dwim) "file")
-      ("r" (helm-projectile-recentf) "recent")
-      ("p" (helm-projectile-switch-project) "project")
-      ("d" (helm-projectile-find-dir) "directory")
-      ("b" (helm-projectile-switch-to-buffer) "switch"))
-     "Search"
-     (("o" (projectile-multi-occur) "occur")
-      ("g" (projectile-ag) "grep"))
-     "Cache"
-     (("C" (projectile-invalidate-cache) "clear")
-      ("x" (projectile-remove-known-project) "remove project")
-      ("X" (projectile-cleanup-known-projects) "cleanup"))))
+  (use-package helm-projectile
+    :config
+    (require 'helm-projectile)
+  
+    (defun projectile-dwim ()
+      (interactive)
+      (if (string= "-" (projectile-project-name))
+          (helm-projectile-switch-project)
+        (hydra-projectile/body)))
+  
+    (nougat-hydra hydra-projectile (:color blue)
+      ("Open"
+       (("f" (helm-projectile-find-file-dwim) "file")
+        ("r" (helm-projectile-recentf) "recent")
+        ("p" (helm-projectile-switch-project) "project")
+        ("d" (helm-projectile-find-dir) "directory")
+        ("b" (helm-projectile-switch-to-buffer) "switch"))
+       "Search"
+       (("o" (projectile-multi-occur) "occur")
+        ("g" (projectile-ag) "grep"))
+       "Cache"
+       (("C" projectile-invalidate-cache "clear")
+        ("x" (projectile-remove-known-project) "remove project")
+        ("X" (projectile-cleanup-known-projects) "cleanup")))))
 
 #+end_src
