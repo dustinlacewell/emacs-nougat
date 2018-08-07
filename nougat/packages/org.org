@@ -121,65 +121,67 @@ normal.
 
 *** theme customizations
 #+begin_src emacs-lisp
-(use-package org-beautify-theme
-  :after (org)
-  :config
-  (setq org-fontify-whole-heading-line t)
-  (setq org-fontify-quote-and-verse-blocks t)
-  (setq org-hide-emphasis-markers t)
-  (let* ((background-color (face-background 'default nil 'default))
-         (padding nil))
-    (custom-theme-set-faces
-     'org-beautify
-     `(org-document-title
-       ((t (:inherit org-level-1
-                     :height 2.0
-                     :underline nil
-                     :box ,padding))))
-     `(org-level-1
-       ((t (:height 1.5 :
-                    box ,padding))))
-     `(org-level-2
-       ((t
-         (:height 1.25
-                  :box ,padding))))
-     `(org-level-3
-       ((t (:box ,padding))))
-     `(org-ellipsis
-       ((t (:inherit org-level-faces))))
-     `(org-list-dt
-       ((t
-         (:inherit default
-                   :height 2.0))))
-     `(org-meta-line
-       ((t (:slant italic
-                   :height 0.9
-                   :foreground "#777777"))))
-     `(org-agenda-structure
-       ((t (:inherit default
-                     :height 2.0
-                     :underline nil))))
-     `(org-document-info-keyword
-       ((t (:inherit default
-                     :height 0.8
-                     :foreground "#AA7777"))))
-     `(org-checkbox
-       ((t (:box (:color "#93a1a1"
-                         :style "released-button")))))
-     `(org-block
-       ((t (:background "#373737"
-                        :box nil
-                        :height 0.8
-                        :family "Menlo"))))
-     `(org-block-begin-line
-       ((t (:height 0.8
-                    :foreground "#777777"
-                    :background "#222222"))))
-     `(org-block-end-line
-       ((t (:inherit org-block-begin-line))))
-     `(org-quote
-       ((t (:slant italic
-                   :height 1.1)))))))
+  (use-package org-beautify-theme
+    :after (org)
+    :config
+    (setq org-fontify-whole-heading-line t)
+    (setq org-fontify-quote-and-verse-blocks t)
+    (setq org-hide-emphasis-markers t)
+    (let* ((background-color (face-background 'default nil 'default))
+           (padding nil))
+      (custom-theme-set-faces
+       'org-beautify
+       `(org-document-title
+         ((t (:inherit org-level-1
+                       :height 2.0
+                       :underline nil
+                       :box ,padding))))
+       `(org-level-1
+         ((t (:height 1.5 :
+                      box ,padding))))
+       `(org-level-2
+         ((t
+           (:height 1.25
+                    :box ,padding))))
+       `(org-level-3
+         ((t (:box ,padding))))
+       `(org-ellipsis
+         ((t (:inherit org-level-faces))))
+       `(org-list-dt
+         ((t
+           (:inherit default
+                     :height 2.0))))
+       `(org-meta-line
+         ((t (:slant italic
+                     :height 0.9
+                     :foreground "#777777"))))
+       `(org-agenda-structure
+         ((t (:inherit default
+                       :height 2.0
+                       :underline nil))))
+       `(org-document-info-keyword
+         ((t (:inherit default
+                       :height 0.8
+                       :foreground "#AA7777"))))
+       `(org-checkbox
+         ((t (:box (:color "#93a1a1"
+                           :style "released-button")))))
+       `(org-done
+         ((t (:strike-through nil))))
+       `(org-block
+         ((t (:background "#373737"
+                          :box nil
+                          :height 0.8
+                          :family "Menlo"))))
+       `(org-block-begin-line
+         ((t (:height 0.8
+                      :foreground "#777777"
+                      :background "#222222"))))
+       `(org-block-end-line
+         ((t (:inherit org-block-begin-line))))
+       `(org-quote
+         ((t (:slant italic
+                     :height 1.1)))))))
 #+end_src
 
 ** feel
