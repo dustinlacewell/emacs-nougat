@@ -1,8 +1,25 @@
 * nix
 ** nix-mode
 #+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'nix-mode
+    (defun nougat-nix-format ()
+      (interactive)
+      (when (eq major-mode 'nix-mode)
+        (save-excursion
+          (beginning-of-buffer)
+          (while (not (equal (point) (point-max)))
+            (if (equal (string-match-p "^[\s-]*$" (thing-at-point 'line)) 0)
+                (delete-horizontal-space)
+              (nix-indent-line))
+            (next-line))))))
+
   (use-package nix-mode
-    :init (add-to-list 'auto-mode-alist '("\\.nix?\\'" . nix-mode)))
+    :straight (nix-mode :type git :host github :repo "NixOS/nix-mode")
+    :config
+    (add-to-list 'auto-mode-alist '("\\.nix?\\'" . nix-mode))
+    (define-key nix-mode-map (kbd "TAB") 'nix-indent-line)
+    (add-hook 'before-save-hook #'nix-format)
+    (setq nix-indent-function 'nix-indent-line))
 #+END_SRC
 
 ** nix-sandbox
