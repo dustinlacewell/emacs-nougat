@@ -46,6 +46,7 @@
 
 ** hydra
  #+begin_src emacs-lisp
+   (require 'helm-org)
    (nougat-hydra hydra-org (:color red :major-mode org-mode)
      ("Shift"
       (("K" org-move-subtree-up "up")
@@ -60,7 +61,8 @@
        ("a" hydra-org-goto-first-sibling "first sibling")
        ("e" hydra-org-goto-last-sibling "last sibling"))
       "Perform"
-      (("r" (lambda () (interactive)
+      (("b" helm-org-in-buffer-headings "browse")
+       ("r" (lambda () (interactive)
               (helm-org-rifle-current-buffer)
               (call-interactively 'org-cycle)
               (call-interactively 'org-cycle)) "rifle")

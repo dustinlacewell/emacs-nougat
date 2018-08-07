@@ -3,13 +3,13 @@
   (use-package helm-projectile
     :config
     (require 'helm-projectile)
-  
+
     (defun projectile-dwim ()
       (interactive)
       (if (string= "-" (projectile-project-name))
           (helm-projectile-switch-project)
         (hydra-projectile/body)))
-  
+
     (nougat-hydra hydra-projectile (:color blue)
       ("Open"
        (("f" (helm-projectile-find-file-dwim) "file")
