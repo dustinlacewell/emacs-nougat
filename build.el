@@ -81,8 +81,10 @@
       (delete-file render))))
 
 (defun do-elisp (source render destination)
-  (org-export-to-file 'org render)
-  (org-babel-tangle-file render destination 'emacs-lisp))
+  (message "source: %s" source)
+  (message "-> %s" (org-export-to-file 'org render))
+  (message "-> %s" destination)
+  (rename-file (car (org-babel-tangle-file render nil 'emacs-lisp)) destination))
 
 (defun do-html (source render destination)
   (org-export-to-file 'org render)
