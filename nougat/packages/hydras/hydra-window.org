@@ -20,7 +20,7 @@
       ("o" delete-other-windows "delete others")
       ("u" winner-undo "undo")
       ("R" winner-redo "redo")
-      ("t" nougat-hydra-toggle-window "toggle")))
+      ("t" nougat-hydra-toggle-window "toggle"))))
 #+end_src
 
 *** Toggle Window Split
