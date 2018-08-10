@@ -11,6 +11,7 @@
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
 #+html_head: <script type="text/javascript" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 #+html_head: <script type="text/" src="https://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+#+PROPERTY: header-args :tangle yes
 
 * setup
 
