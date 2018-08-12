@@ -1,4 +1,5 @@
 * hydra-window
+
 #+begin_src emacs-lisp
   (use-package ace-window)
   (winner-mode 1)
@@ -14,50 +15,92 @@
      (("q" split-window-right "left")
       ("r" (progn (split-window-right) (call-interactively 'other-window)) "right")
       ("e" split-window-below "up")
-      ("w" (progn (split-window-below) (call-interactively 'other-window)) "down"))
+      ("w" (progn (split-window-below) (call-interactively 'other-window)) "down")
+      ("t" nougat-hydra-toggle-window "toggle split"))
      "Do"
      (("d" delete-window "delete")
       ("o" delete-other-windows "delete others")
       ("u" winner-undo "undo")
-      ("R" winner-redo "redo")
-      ("t" nougat-hydra-toggle-window "toggle"))))
+      ("R" winner-redo "redo"))
+     "Resize"
+     (("H" hydra-move-splitter-left "resize left")
+      ("J" hydra-move-splitter-down "resize down")
+      ("K" hydra-move-splitter-up "resize up")
+      ("L" hydra-move-splitter-right "resize right"))))
 #+end_src
 
 *** Toggle Window Split
+;; TODO: Make work with 3+ window frames
 #+begin_src emacs-lisp
-(defun my/toggle-window-split (&optional arg)
-    "Switch between 2 windows split horizontally or vertically.
-    With ARG, swap them instead."
-    (interactive "P")
-    (unless (= (count-windows) 2)
-      (user-error "Not two windows"))
-    ;; Swap two windows
-    (if arg
-        (let ((this-win-buffer (window-buffer))
-              (next-win-buffer (window-buffer (next-window))))
-          (set-window-buffer (selected-window) next-win-buffer)
-          (set-window-buffer (next-window) this-win-buffer))
-      ;; Swap between horizontal and vertical splits
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+  (defun nougat-hydra-toggle-window (&optional arg)
+      "Switch between 2 windows split horizontally or vertically.
+      With ARG, swap them instead."
+      (interactive "P")
+      (unless (= (count-windows) 2)
+        (user-error "Not two windows"))
+      ;; Swap two windows
+      (if arg
+          (let ((this-win-buffer (window-buffer))
+                (next-win-buffer (window-buffer (next-window))))
+            (set-window-buffer (selected-window) next-win-buffer)
+            (set-window-buffer (next-window) this-win-buffer))
+        ;; Swap between horizontal and vertical splits
+        (let* ((this-win-buffer (window-buffer))
+               (next-win-buffer (window-buffer (next-window)))
+               (this-win-edges (window-edges (selected-window)))
+               (next-win-edges (window-edges (next-window)))
+               (this-win-2nd (not (and (<= (car this-win-edges)
+                                           (car next-win-edges))
+                                       (<= (cadr this-win-edges)
+                                           (cadr next-win-edges)))))
+               (splitter
+                (if (= (car this-win-edges)
+                       (car (window-edges (next-window))))
+                    'split-window-horizontally
+                  'split-window-vertically)))
+          (delete-other-windows)
+          (let ((first-win (selected-window)))
+            (funcall splitter)
+            (if this-win-2nd (other-window 1))
+            (set-window-buffer (selected-window) this-win-buffer)
+            (set-window-buffer (next-window) next-win-buffer)
+            (select-window first-win)
+            (if this-win-2nd (other-window 1))))))
 
-#+end_src 
+#+end_src
+
+*** hydra-move-splitter
+#+begin_src emacs-lisp
+(defun hydra-move-splitter-left (arg)
+  "Move window splitter left."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+      (shrink-window-horizontally arg)
+    (enlarge-window-horizontally arg)))
+
+(defun hydra-move-splitter-right (arg)
+  "Move window splitter right."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+      (enlarge-window-horizontally arg)
+    (shrink-window-horizontally arg)))
+
+(defun hydra-move-splitter-up (arg)
+  "Move window splitter up."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+      (enlarge-window arg)
+    (shrink-window arg)))
+
+(defun hydra-move-splitter-down (arg)
+  "Move window splitter down."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+      (shrink-window arg)
+    (enlarge-window arg)))
+#+end_src
+
