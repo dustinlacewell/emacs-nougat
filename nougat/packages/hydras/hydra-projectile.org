@@ -1,5 +1,11 @@
 * hydra-projectile
 #+begin_src emacs-lisp
+  (defun projectile-readme ()
+      (interactive)
+      (let ((file-name (-find (lambda (f) (s-matches? "^readme" f))
+                              (projectile-current-project-files))))
+        (find-file (concat (projectile-project-root) "/" file-name))))
+
   (use-package helm-projectile
     :config
     (require 'helm-projectile)
@@ -16,7 +22,8 @@
         ("r" (helm-projectile-recentf) "recent")
         ("p" (helm-projectile-switch-project) "project")
         ("d" (helm-projectile-find-dir) "directory")
-        ("b" (helm-projectile-switch-to-buffer) "switch"))
+        ("b" (helm-projectile-switch-to-buffer) "switch")
+        ("R" (projectile-readme) "README"))
        "Search"
        (("o" (projectile-multi-occur) "occur")
         ("g" (projectile-ag) "grep"))
