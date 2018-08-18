@@ -1,64 +1,99 @@
+#+PROPERTY: header-args    :tangle yes
+
 * nix
 ** nix-mode
-#+BEGIN_SRC emacs-lisp
-
-  (setq nix-expr-caps1 '(" =[ \n]" "\(" "\{" "\\[" "\\bwith " "\\blet\\b"))
-  (setq nix-expr-ends1 '(";" "\)" "\\]" "\}" "\\bin\\b"))
-  (setq nix-expr-start (nix-make-regexp nix-expr-caps1))
-  (setq nix-expr-end (nix-make-regexp nix-expr-ends1))
-  (setq nix-expr-combined (nix-make-regexp (append nix-expr-caps1
-                                                   nix-expr-ends)))
-
-  (defun nix-make-regexp (parts)
+*** boilerplate
+**** make-regexp
+#+begin_src emacs-lisp
+  (defun nix-mode-make-regexp (parts)
     (declare (indent defun))
     (string-join parts "\\|"))
+#+end_src
 
+**** search-backward
+#+begin_src emacs-lisp
+  (defun nix-mode-search-backward ()
+    (re-search-backward nix-mode-combined-regexp nil t))
+#+end_src
+
+*** settings
+#+begin_src emacs-lisp
+  (setq nix-mode-caps '(" =[ \n]" "\(" "\{" "\\[" "\\bwith " "\\blet\\b"))
+  (setq nix-mode-ends '(";" "\)" "\\]" "\}" "\\bin\\b"))
+  (setq nix-mode-caps-regexp (nix-mode-make-regexp nix-mode-caps))
+  (setq nix-mode-ends-regexp (nix-mode-make-regexp nix-mode-ends))
+  (setq nix-mode-combined-regexp (nix-mode-make-regexp (append nix-mode-caps nix-mode-ends)))
+#+end_src
+
+*** fixed-nix-indent
+#+BEGIN_SRC emacs-lisp
   (defun fixed-nix-indent-expression-start ()
-    (let* ((counter 0)
+    (let* ((ends 0)
            (once nil)
            (done nil)
            (indent (current-indentation)))
       (save-excursion
+        ;; we want to indent this line, so we don't care what it contains
+        ;; skip to the beginning so reverse searching doesn't find any matches within
         (beginning-of-line)
-        (while (and (not done) (re-search-backward nix-expr-combined nil t))
-          (cond ((looking-at nix-expr-end)
-                 (setq counter (- counter 1)))
-                ((looking-at nix-expr-start)
+        ;; search backward until an unbalanced cap is found or no cap or end is found
+        (while (and (not done) (nix-mode-search-backward))
+          (cond ((looking-at nix-mode-ends-regexp)
+                 ;; count the matched end
+                 ;; this means we expect to find at least one more cap
+                 (setq ends (+ ends 1)))
+                ((looking-at nix-mode-caps-regexp)
+                 ;; we found at least one cap
+                 ;; this means our function will return true
+                 ;; this signals to the caller we handled the indentation
                  (setq once t)
-                 (if (equal 0 counter)
-                     (progn
-                       (setq indent (current-indentation))
-                       (setq done t))
-                   (setq counter (+ counter 1)))))))
-      (if done
-          (indent-line-to (+ tab-width indent))
-        (indent-line-to indent))
+                 (if (> ends 0)
+                     ;; this cap corresponds to a previously matched end
+                     ;; reduce the number of unbalanced ends
+                     (setq ends (- ends 1))
+                   ;; no unbalanced ends correspond to this cap
+                   ;; this means we have found the expression that contains our line
+                   ;; we want to indent relative to this line
+                   (setq indent (current-indentation))
+                   ;; signal that the search loop should exit
+                   (setq done t))))))
+      ;; done is t when we found an unbalanced expression cap
+      (when done
+        ;; indent relative to the indentation of the expression containing our line
+        (indent-line-to (+ tab-width indent)))
+      ;; return t to the caller if we found at least one cap
+      ;; this signals that we handled the indentation
       once))
+#+END_SRC
 
-  (with-eval-after-load 'nix-mode
-    (defun nougat-nix-format ()
-      (interactive)
-      (when (eq major-mode 'nix-mode)
-        (save-excursion
-          (beginning-of-buffer)
-          (while (not (equal (point) (point-max)))
-            (if (equal (string-match-p "^[\s-]*$" (thing-at-point 'line)) 0)
-                (delete-horizontal-space)
-              (nix-indent-line))
-            (next-line))))))
+*** format
+#+begin_src emacs-lisp
+  (defun nix-mode-format ()
+    "Format the entire nix-mode buffer"
+    (interactive)
+    (when (eq major-mode 'nix-mode)
+      (save-excursion
+        (beginning-of-buffer)
+        (while (not (equal (point) (point-max)))
+          (if (equal (string-match-p "^[\s-]*$" (thing-at-point 'line)) 0)
+              (delete-horizontal-space)
+            (nix-indent-line))
+          (next-line)))))
+#+end_src
 
-
+*** install
+#+begin_src emacs-lisp
   (use-package nix-mode
     :straight (nix-mode :type git :host github :repo "NixOS/nix-mode")
     :config
     (add-to-list 'auto-mode-alist '("\\.nix?\\'" . nix-mode))
-    (add-hook 'before-save-hook #'nougat-nix-format)
+    (add-hook 'before-save-hook #'nix-mode-format)
     (define-key nix-mode-map (kbd "TAB") 'nix-indent-line)
     (setq nix-indent-function 'nix-indent-line)
     (defalias
       #'nix-indent-expression-start
       #'fixed-nix-indent-expression-start))
-#+END_SRC
+#+end_src
 
 ** nix-sandbox
 #+begin_src emacs-lisp
