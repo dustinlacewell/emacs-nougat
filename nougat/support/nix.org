@@ -1,6 +1,40 @@
 * nix
 ** nix-mode
 #+BEGIN_SRC emacs-lisp
+
+  (setq nix-expr-caps1 '(" =[ \n]" "\(" "\{" "\\[" "\\bwith " "\\blet\\b"))
+  (setq nix-expr-ends1 '(";" "\)" "\\]" "\}" "\\bin\\b"))
+  (setq nix-expr-start (nix-make-regexp nix-expr-caps1))
+  (setq nix-expr-end (nix-make-regexp nix-expr-ends1))
+  (setq nix-expr-combined (nix-make-regexp (append nix-expr-caps1
+                                                   nix-expr-ends)))
+
+  (defun nix-make-regexp (parts)
+    (declare (indent defun))
+    (string-join parts "\\|"))
+
+  (defun fixed-nix-indent-expression-start ()
+    (let* ((counter 0)
+           (once nil)
+           (done nil)
+           (indent (current-indentation)))
+      (save-excursion
+        (beginning-of-line)
+        (while (and (not done) (re-search-backward nix-expr-combined nil t))
+          (cond ((looking-at nix-expr-end)
+                 (setq counter (- counter 1)))
+                ((looking-at nix-expr-start)
+                 (setq once t)
+                 (if (equal 0 counter)
+                     (progn
+                       (setq indent (current-indentation))
+                       (setq done t))
+                   (setq counter (+ counter 1)))))))
+      (if done
+          (indent-line-to (+ tab-width indent))
+        (indent-line-to indent))
+      once))
+
   (with-eval-after-load 'nix-mode
     (defun nougat-nix-format ()
       (interactive)
@@ -13,13 +47,17 @@
               (nix-indent-line))
             (next-line))))))
 
+
   (use-package nix-mode
     :straight (nix-mode :type git :host github :repo "NixOS/nix-mode")
     :config
     (add-to-list 'auto-mode-alist '("\\.nix?\\'" . nix-mode))
+    (add-hook 'before-save-hook #'nougat-nix-format)
     (define-key nix-mode-map (kbd "TAB") 'nix-indent-line)
-    (add-hook 'before-save-hook #'nix-format)
-    (setq nix-indent-function 'nix-indent-line))
+    (setq nix-indent-function 'nix-indent-line)
+    (defalias
+      #'nix-indent-expression-start
+      #'fixed-nix-indent-expression-start))
 #+END_SRC
 
 ** nix-sandbox
