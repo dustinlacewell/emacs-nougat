@@ -20,9 +20,11 @@
 #+begin_src emacs-lisp
   (setq nix-mode-caps '(" =[ \n]" "\(" "\{" "\\[" "\\bwith " "\\blet\\b"))
   (setq nix-mode-ends '(";" "\)" "\\]" "\}" "\\bin\\b"))
+  (setq nix-mode-quotes '("''" "\""))
   (setq nix-mode-caps-regexp (nix-mode-make-regexp nix-mode-caps))
   (setq nix-mode-ends-regexp (nix-mode-make-regexp nix-mode-ends))
-  (setq nix-mode-combined-regexp (nix-mode-make-regexp (append nix-mode-caps nix-mode-ends)))
+  (setq nix-mode-quotes-regexp (nix-mode-make-regexp nix-mode-quotes))
+  (setq nix-mode-combined-regexp (nix-mode-make-regexp (append nix-mode-caps nix-mode-ends nix-mode-quotes)))
 #+end_src
 
 *** fixed-nix-indent
@@ -38,25 +40,29 @@
         (beginning-of-line)
         ;; search backward until an unbalanced cap is found or no cap or end is found
         (while (and (not done) (nix-mode-search-backward))
-          (cond ((looking-at nix-mode-ends-regexp)
-                 ;; count the matched end
-                 ;; this means we expect to find at least one more cap
-                 (setq ends (+ ends 1)))
-                ((looking-at nix-mode-caps-regexp)
-                 ;; we found at least one cap
-                 ;; this means our function will return true
-                 ;; this signals to the caller we handled the indentation
-                 (setq once t)
-                 (if (> ends 0)
-                     ;; this cap corresponds to a previously matched end
-                     ;; reduce the number of unbalanced ends
-                     (setq ends (- ends 1))
-                   ;; no unbalanced ends correspond to this cap
-                   ;; this means we have found the expression that contains our line
-                   ;; we want to indent relative to this line
-                   (setq indent (current-indentation))
-                   ;; signal that the search loop should exit
-                   (setq done t))))))
+          (cond
+           ((looking-at nix-mode-quotes-regexp)
+            ;; skip over strings entirely
+            (re-search-backward nix-mode-quotes-regexp nil t))
+           ((looking-at nix-mode-ends-regexp)
+            ;; count the matched end
+            ;; this means we expect to find at least one more cap
+            (setq ends (+ ends 1)))
+           ((looking-at nix-mode-caps-regexp)
+            ;; we found at least one cap
+            ;; this means our function will return true
+            ;; this signals to the caller we handled the indentation
+            (setq once t)
+            (if (> ends 0)
+                ;; this cap corresponds to a previously matched end
+                ;; reduce the number of unbalanced ends
+                (setq ends (- ends 1))
+              ;; no unbalanced ends correspond to this cap
+              ;; this means we have found the expression that contains our line
+              ;; we want to indent relative to this line
+              (setq indent (current-indentation))
+              ;; signal that the search loop should exit
+              (setq done t))))))
       ;; done is t when we found an unbalanced expression cap
       (when done
         ;; indent relative to the indentation of the expression containing our line
