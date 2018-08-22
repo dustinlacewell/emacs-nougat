@@ -30,10 +30,12 @@ start with that:
 #+INCLUDE: "../nougat/required.org"
 #+end_src
 
-If you want to include a specific heading from a nougat file you can do that too:
+If you want to include a specific heading from a nougat file you can do that
+too. For example to only include the bit that disables the menubar from =disable.org=
+you can do something like this:
 
 #+begin_src text
-#+INCLUDE: "../nougat/package-management/straight.org::use-package integration"
+#+INCLUDE: "../nougat/emacs/disable.org::menubar"
 #+end_src
 
 There are many flexible options for specifying what you want to include from the
